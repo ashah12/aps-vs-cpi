@@ -130,7 +130,7 @@ export default function App() {
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="year" domain={['dataMin', 'dataMax + 1']} />
               <YAxis />
-              <Tooltip />
+              <Tooltip formatter={(val) => `${val.toFixed(2)}%`} />
               <Legend />
               <Line type="monotone" dataKey="wage" name="Wage Growth" stroke="#8884d8" />
               <Line type="monotone" dataKey="cpi" name="CPI" stroke="#82ca9d" />
@@ -141,7 +141,7 @@ export default function App() {
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="year" domain={['dataMin', 'dataMax + 1']} />
               <YAxis />
-              <Tooltip />
+              <Tooltip formatter={(val) => `${val.toFixed(2)}%`} />
               <Legend />
               <Bar dataKey="wage" name="Wage Growth" fill="#8884d8" />
               <Bar dataKey="cpi" name="CPI" fill="#82ca9d" />
