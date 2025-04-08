@@ -129,7 +129,13 @@ export default function App() {
             <LineChart data={filteredData} margin={{ right: 20 }}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="year" domain={['dataMin', 'dataMax + 1']} />
-              <YAxis />
+              <YAxis 
+                label={{ 
+                  value: 'Percentage Difference (%)', 
+                  angle: -90, 
+                  position: 'centre' 
+                }} 
+              />
               <Tooltip formatter={(val) => `${val.toFixed(2)}%`} />
               <Legend />
               <Line type="monotone" dataKey="wage" name="Wage Growth" stroke="#8884d8" />
@@ -140,7 +146,13 @@ export default function App() {
             <BarChart data={filteredData} margin={{ right: 20 }}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="year" domain={['dataMin', 'dataMax + 1']} />
-              <YAxis />
+              <YAxis 
+                label={{ 
+                  value: 'Percentage Difference (%)', 
+                  angle: -90, 
+                  position: 'centre' 
+                }} 
+              />
               <Tooltip formatter={(val) => `${val.toFixed(2)}%`} />
               <Legend />
               <Bar dataKey="wage" name="Wage Growth" fill="#8884d8" />
@@ -190,7 +202,7 @@ export default function App() {
                   value: 'Salary ($)', 
                   angle: -90, 
                   position: 'insideLeft' 
-                }} 
+                }}
               />
               <Tooltip formatter={(val) => `$${val.toFixed(2)}`} />
               <Legend />
