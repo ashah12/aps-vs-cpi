@@ -133,7 +133,8 @@ export default function App() {
                 label={{ 
                   value: 'Percentage Difference (%)', 
                   angle: -90, 
-                  position: 'centre' 
+                  position: 'centre',
+                  dx: -5
                 }} 
               />
               <Tooltip formatter={(val) => `${val.toFixed(2)}%`} />
@@ -150,7 +151,8 @@ export default function App() {
                 label={{ 
                   value: 'Percentage Difference (%)', 
                   angle: -90, 
-                  position: 'centre' 
+                  position: 'centre',
+                  dx: -5
                 }} 
               />
               <Tooltip formatter={(val) => `${val.toFixed(2)}%`} />
@@ -192,7 +194,7 @@ export default function App() {
           </label>
         </div>
 
-        <div style={{ height: 400, maxWidth: '100%', overflowX: 'hidden' }}>
+        <div style={{ height: 400, maxWidth: '100%', overflowX: 'hidden', marginTop: '1rem' }}>
           <ResponsiveContainer width="90%" height="90%">
             <LineChart data={salaryProjectionData} margin={{ right: 20, left: 20 }}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -201,8 +203,12 @@ export default function App() {
                 label={{ 
                   value: 'Salary ($)', 
                   angle: -90, 
-                  position: 'insideLeft' 
+                  position: 'insideLeft',
+                  dx: -5
                 }}
+                width={80}
+                ticks={Array.from({length: 20}, (_, i) => -50000 + (i * 10000))}
+                tickFormatter={(value) => `${value/1000}k`}
               />
               <Tooltip formatter={(val) => `$${val.toFixed(2)}`} />
               <Legend />
