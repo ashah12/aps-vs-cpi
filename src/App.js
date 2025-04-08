@@ -6,7 +6,7 @@ import {
 
 export default function App() {
   const [chartType, setChartType] = useState('line');
-  const [startYear, setStartYear] = useState(2024);
+  const [startYear, setStartYear] = useState(2015);
   const [endYear, setEndYear] = useState(2026);
   const [projectionStartYear, setProjectionStartYear] = useState(2015);
   const [customData, setCustomData] = useState([]);
