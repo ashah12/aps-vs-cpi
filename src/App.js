@@ -82,7 +82,7 @@ const CPIData = {
   2021: 3.8,
   2022: 6.1,
   2023: 6.0,
-  2024: 3.5, // Projected
+  2024: 3.8, 
   2025: 2.8, // Projected
   2026: 2.5, // Projected
   2027: 2.5, // Projected
