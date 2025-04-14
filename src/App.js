@@ -9,66 +9,86 @@ const AGENCIES = {
   'APS': {
     name: 'Australian Public Service',
     data: [
-      { year: 2015, wage: 2.5, cpi: 1.5 },
-      { year: 2016, wage: 2.0, cpi: 1.3 },
-      { year: 2017, wage: 2.2, cpi: 1.9 },
-      { year: 2018, wage: 2.4, cpi: 2.1 },
-      { year: 2019, wage: 2.3, cpi: 1.8 },
-      { year: 2020, wage: 1.5, cpi: 0.9 },
-      { year: 2021, wage: 2.1, cpi: 3.0 },
-      { year: 2022, wage: 3.5, cpi: 6.8 },
-      { year: 2023, wage: 4.0, cpi: 7.1 },
-      { year: 2024, wage: 4.0, cpi: 7.1 },
-      { year: 2025, wage: 4.0, cpi: 7.1 },
-      { year: 2026, wage: 3.4, cpi: 7.1 },
-      { year: 2027, wage: 3.2, cpi: 3.5 },
-      { year: 2028, wage: 3.0, cpi: 3.0 },
-      { year: 2029, wage: 2.8, cpi: 2.8 },
-      { year: 2030, wage: 2.8, cpi: 2.8 }
+      { year: 2015, wage: 2.5 },
+      { year: 2016, wage: 2.0 },
+      { year: 2017, wage: 2.2 },
+      { year: 2018, wage: 2.4 },
+      { year: 2019, wage: 2.3 },
+      { year: 2020, wage: 1.5 },
+      { year: 2021, wage: 2.1 },
+      { year: 2022, wage: 3.5 },
+      { year: 2023, wage: 4.0 },
+      { year: 2024, wage: 4.0 },
+      { year: 2025, wage: 4.0 },
+      { year: 2026, wage: 3.4 },
+      { year: 2027, wage: 3.2 },
+      { year: 2028, wage: 3.0 },
+      { year: 2029, wage: 2.8 },
+      { year: 2030, wage: 2.8 }
     ]
   },
   'Defence': {
     name: 'Department of Defence',
     data: [
-      { year: 2015, wage: 2.7, cpi: 1.5 },
-      { year: 2016, wage: 2.2, cpi: 1.3 },
-      { year: 2017, wage: 2.4, cpi: 1.9 },
-      { year: 2018, wage: 2.6, cpi: 2.1 },
-      { year: 2019, wage: 2.5, cpi: 1.8 },
-      { year: 2020, wage: 1.7, cpi: 0.9 },
-      { year: 2021, wage: 2.3, cpi: 3.0 },
-      { year: 2022, wage: 3.7, cpi: 6.8 },
-      { year: 2023, wage: 4.2, cpi: 7.1 },
-      { year: 2024, wage: 4.2, cpi: 7.1 },
-      { year: 2025, wage: 4.2, cpi: 7.1 },
-      { year: 2026, wage: 3.6, cpi: 7.1 },
-      { year: 2027, wage: 3.4, cpi: 3.5 },
-      { year: 2028, wage: 3.2, cpi: 3.0 },
-      { year: 2029, wage: 3.0, cpi: 2.8 },
-      { year: 2030, wage: 3.0, cpi: 2.8 }
+      { year: 2015, wage: 2.7 },
+      { year: 2016, wage: 2.2 },
+      { year: 2017, wage: 2.4 },
+      { year: 2018, wage: 2.6 },
+      { year: 2019, wage: 2.5 },
+      { year: 2020, wage: 1.7 },
+      { year: 2021, wage: 2.3 },
+      { year: 2022, wage: 3.7 },
+      { year: 2023, wage: 4.2 },
+      { year: 2024, wage: 4.2 },
+      { year: 2025, wage: 4.2 },
+      { year: 2026, wage: 3.6 },
+      { year: 2027, wage: 3.4 },
+      { year: 2028, wage: 3.2 },
+      { year: 2029, wage: 3.0 },
+      { year: 2030, wage: 3.0 }
     ]
   },
   'ATO': {
     name: 'Australian Taxation Office',
     data: [
-      { year: 2015, wage: 2.3, cpi: 1.5 },
-      { year: 2016, wage: 1.8, cpi: 1.3 },
-      { year: 2017, wage: 2.0, cpi: 1.9 },
-      { year: 2018, wage: 2.2, cpi: 2.1 },
-      { year: 2019, wage: 2.1, cpi: 1.8 },
-      { year: 2020, wage: 1.3, cpi: 0.9 },
-      { year: 2021, wage: 1.9, cpi: 3.0 },
-      { year: 2022, wage: 3.3, cpi: 6.8 },
-      { year: 2023, wage: 3.8, cpi: 7.1 },
-      { year: 2024, wage: 3.8, cpi: 7.1 },
-      { year: 2025, wage: 3.8, cpi: 7.1 },
-      { year: 2026, wage: 3.2, cpi: 7.1 },
-      { year: 2027, wage: 3.0, cpi: 3.5 },
-      { year: 2028, wage: 2.8, cpi: 3.0 },
-      { year: 2029, wage: 2.6, cpi: 2.8 },
-      { year: 2030, wage: 2.6, cpi: 2.8 }
+      { year: 2015, wage: 2.3 },
+      { year: 2016, wage: 1.8 },
+      { year: 2017, wage: 2.0 },
+      { year: 2018, wage: 2.2 },
+      { year: 2019, wage: 2.1 },
+      { year: 2020, wage: 1.3 },
+      { year: 2021, wage: 1.9 },
+      { year: 2022, wage: 3.3 },
+      { year: 2023, wage: 3.8 },
+      { year: 2024, wage: 3.8 },
+      { year: 2025, wage: 3.8 },
+      { year: 2026, wage: 3.2 },
+      { year: 2027, wage: 3.0 },
+      { year: 2028, wage: 2.8 },
+      { year: 2029, wage: 2.6 },
+      { year: 2030, wage: 2.6 }
     ]
   }
+};
+
+// ABS CPI data for June quarter
+const CPIData = {
+  2015: 1.5,
+  2016: 1.0,
+  2017: 1.9,
+  2018: 2.1,
+  2019: 1.6,
+  2020: -0.3,
+  2021: 3.8,
+  2022: 6.1,
+  2023: 6.0,
+  2024: 3.5, // Projected
+  2025: 2.8, // Projected
+  2026: 2.5, // Projected
+  2027: 2.5, // Projected
+  2028: 2.5, // Projected
+  2029: 2.5, // Projected
+  2030: 2.5  // Projected
 };
 
 export default function App() {
@@ -96,7 +116,8 @@ export default function App() {
       .filter(d => d.year >= startYear && d.year <= endYear)
       .map(d => ({
         ...d,
-        gap: d.wage - d.cpi // Real wage change
+        cpi: CPIData[d.year] || 0,
+        gap: d.wage - (CPIData[d.year] || 0) // Real wage change
       }));
   }, [startYear, endYear, selectedAgency]);
 
@@ -116,7 +137,7 @@ export default function App() {
       .filter(d => d.year <= endYear)
       .map((d, idx) => {
         if (idx > 0) {
-          expected *= (1 + d.cpi / 100);
+          expected *= (1 + (CPIData[d.year] || 0) / 100);
           actual *= (1 + d.wage / 100);
         }
 
