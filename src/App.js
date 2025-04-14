@@ -267,7 +267,7 @@ export default function App() {
       }}>
         <ResponsiveContainer width="100%" height="100%">
           {chartType === 'line' ? (
-            <LineChart data={filteredData} margin={{ top: 20, right: 10, left: 40, bottom: 20 }}>
+            <LineChart data={filteredData} margin={{ top: 20, right: 10, left: 20, bottom: 20 }}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis 
                 dataKey="year" 
@@ -279,13 +279,14 @@ export default function App() {
                   value: 'Percentage Difference (%)', 
                   angle: -90, 
                   position: 'insideLeft',
-                  offset: 10,
+                  offset: 5,
                   style: { 
                     fontSize: 'clamp(0.8rem, 2vw, 1rem)',
                     textAnchor: 'middle'
                   }
                 }}
                 tick={{ fontSize: 'clamp(0.8rem, 2vw, 1rem)' }}
+                width={40}
               />
               <Tooltip 
                 formatter={(val) => `${val.toFixed(2)}%`}
@@ -305,7 +306,7 @@ export default function App() {
               <Line type="monotone" dataKey="gap" name="Real Wage Change" stroke="#ff7300" strokeDasharray="5 5" />
             </LineChart>
           ) : (
-            <BarChart data={filteredData} margin={{ top: 20, right: 10, left: 40, bottom: 20 }}>
+            <BarChart data={filteredData} margin={{ top: 20, right: 10, left: 20, bottom: 20 }}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis 
                 dataKey="year" 
@@ -317,13 +318,14 @@ export default function App() {
                   value: 'Percentage Difference (%)', 
                   angle: -90, 
                   position: 'insideLeft',
-                  offset: 10,
+                  offset: 5,
                   style: { 
                     fontSize: 'clamp(0.8rem, 2vw, 1rem)',
                     textAnchor: 'middle'
                   }
                 }}
                 tick={{ fontSize: 'clamp(0.8rem, 2vw, 1rem)' }}
+                width={40}
               />
               <Tooltip 
                 formatter={(val) => `${val.toFixed(2)}%`}
