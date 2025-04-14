@@ -4,22 +4,11 @@ import {
   Tooltip, Legend, ResponsiveContainer
 } from 'recharts';
 
-export default function App() {
-  const [chartType, setChartType] = useState('line');
-  const [startYear, setStartYear] = useState(2015);
-  const [endYear, setEndYear] = useState(2026);
-  const [projectionStartYear, setProjectionStartYear] = useState(2015);
-  const [customData, setCustomData] = useState([]);
-  const [yearOptions, setYearOptions] = useState([]);
-  const [startingSalary, setStartingSalary] = useState(60000);
-
-  const toggleChart = () => {
-    setChartType(prev => (prev === 'line' ? 'bar' : 'line'));
-  };
-
-  // Load mock data on mount
-  useEffect(() => {
-    const mockData = [
+// Agency data structure
+const AGENCIES = {
+  'APS': {
+    name: 'Australian Public Service',
+    data: [
       { year: 2015, wage: 2.5, cpi: 1.5 },
       { year: 2016, wage: 2.0, cpi: 1.3 },
       { year: 2017, wage: 2.2, cpi: 1.9 },
@@ -32,31 +21,97 @@ export default function App() {
       { year: 2024, wage: 4.0, cpi: 7.1 },
       { year: 2025, wage: 4.0, cpi: 7.1 },
       { year: 2026, wage: 3.4, cpi: 7.1 },
-    ];
+      { year: 2027, wage: 3.2, cpi: 3.5 },
+      { year: 2028, wage: 3.0, cpi: 3.0 },
+      { year: 2029, wage: 2.8, cpi: 2.8 },
+      { year: 2030, wage: 2.8, cpi: 2.8 }
+    ]
+  },
+  'Defence': {
+    name: 'Department of Defence',
+    data: [
+      { year: 2015, wage: 2.7, cpi: 1.5 },
+      { year: 2016, wage: 2.2, cpi: 1.3 },
+      { year: 2017, wage: 2.4, cpi: 1.9 },
+      { year: 2018, wage: 2.6, cpi: 2.1 },
+      { year: 2019, wage: 2.5, cpi: 1.8 },
+      { year: 2020, wage: 1.7, cpi: 0.9 },
+      { year: 2021, wage: 2.3, cpi: 3.0 },
+      { year: 2022, wage: 3.7, cpi: 6.8 },
+      { year: 2023, wage: 4.2, cpi: 7.1 },
+      { year: 2024, wage: 4.2, cpi: 7.1 },
+      { year: 2025, wage: 4.2, cpi: 7.1 },
+      { year: 2026, wage: 3.6, cpi: 7.1 },
+      { year: 2027, wage: 3.4, cpi: 3.5 },
+      { year: 2028, wage: 3.2, cpi: 3.0 },
+      { year: 2029, wage: 3.0, cpi: 2.8 },
+      { year: 2030, wage: 3.0, cpi: 2.8 }
+    ]
+  },
+  'ATO': {
+    name: 'Australian Taxation Office',
+    data: [
+      { year: 2015, wage: 2.3, cpi: 1.5 },
+      { year: 2016, wage: 1.8, cpi: 1.3 },
+      { year: 2017, wage: 2.0, cpi: 1.9 },
+      { year: 2018, wage: 2.2, cpi: 2.1 },
+      { year: 2019, wage: 2.1, cpi: 1.8 },
+      { year: 2020, wage: 1.3, cpi: 0.9 },
+      { year: 2021, wage: 1.9, cpi: 3.0 },
+      { year: 2022, wage: 3.3, cpi: 6.8 },
+      { year: 2023, wage: 3.8, cpi: 7.1 },
+      { year: 2024, wage: 3.8, cpi: 7.1 },
+      { year: 2025, wage: 3.8, cpi: 7.1 },
+      { year: 2026, wage: 3.2, cpi: 7.1 },
+      { year: 2027, wage: 3.0, cpi: 3.5 },
+      { year: 2028, wage: 2.8, cpi: 3.0 },
+      { year: 2029, wage: 2.6, cpi: 2.8 },
+      { year: 2030, wage: 2.6, cpi: 2.8 }
+    ]
+  }
+};
 
-    setCustomData(mockData);
-    setYearOptions(mockData.map(d => d.year));
-  }, []);
+export default function App() {
+  const [chartType, setChartType] = useState('line');
+  const [startYear, setStartYear] = useState(2015);
+  const [endYear, setEndYear] = useState(2030);
+  const [projectionStartYear, setProjectionStartYear] = useState(2015);
+  const [selectedAgency, setSelectedAgency] = useState('APS');
+  const [yearOptions, setYearOptions] = useState([]);
+  const [startingSalary, setStartingSalary] = useState(60000);
+
+  const toggleChart = () => {
+    setChartType(prev => (prev === 'line' ? 'bar' : 'line'));
+  };
+
+  // Load data on mount and when agency changes
+  useEffect(() => {
+    const agencyData = AGENCIES[selectedAgency].data;
+    setYearOptions(agencyData.map(d => d.year));
+  }, [selectedAgency]);
 
   const filteredData = useMemo(() => {
-    return customData
+    const agencyData = AGENCIES[selectedAgency].data;
+    return agencyData
       .filter(d => d.year >= startYear && d.year <= endYear)
       .map(d => ({
         ...d,
         gap: d.wage - d.cpi // Real wage change
       }));
-  }, [startYear, endYear, customData]);
+  }, [startYear, endYear, selectedAgency]);
 
   const salaryProjectionData = useMemo(() => {
     if (!startingSalary || !projectionStartYear) return [];
 
     let expected = startingSalary;
     let actual = startingSalary;
-    const startIndex = customData.findIndex(d => d.year === projectionStartYear);
+    const agencyData = AGENCIES[selectedAgency].data;
+    const startIndex = agencyData.findIndex(d => d.year === projectionStartYear);
+    const currentYear = new Date().getFullYear();
 
     if (startIndex === -1) return [];
 
-    return customData
+    return agencyData
       .slice(startIndex)
       .filter(d => d.year <= endYear)
       .map((d, idx) => {
@@ -70,50 +125,137 @@ export default function App() {
           expected: Number(expected.toFixed(2)),
           actual: Number(actual.toFixed(2)),
           difference: Number((actual - expected).toFixed(2)),
+          isFuture: d.year > currentYear
         };
       });
-  }, [customData, projectionStartYear, endYear, startingSalary]);
+  }, [selectedAgency, projectionStartYear, endYear, startingSalary]);
 
   return (
-    <div style={{ width: '100%', padding: 20, overflowX: 'hidden' }}>
-      <h2>ABS Wage Growth vs CPI</h2>
+    <div style={{ 
+      width: '100%', 
+      padding: '10px',
+      maxWidth: '100%',
+      margin: '0 auto',
+      overflowX: 'hidden',
+      boxSizing: 'border-box'
+    }}>
+      <h2 style={{ 
+        fontSize: 'clamp(1.5rem, 4vw, 2rem)',
+        marginBottom: '20px',
+        textAlign: 'center',
+        padding: '0 10px'
+      }}>
+        {AGENCIES[selectedAgency].name} Wage Growth vs CPI
+      </h2>
+
+      {/* Agency Selector */}
+      <div style={{ 
+        marginBottom: '20px',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '10px',
+        padding: '0 10px'
+      }}>
+        <label style={{ 
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '5px',
+          fontSize: 'clamp(1rem, 3vw, 1.2rem)'
+        }}>
+          Select Agency:
+          <select
+            value={selectedAgency}
+            onChange={e => setSelectedAgency(e.target.value)}
+            style={{ 
+              padding: '10px',
+              fontSize: 'clamp(1rem, 3vw, 1.2rem)',
+              borderRadius: '5px',
+              border: '1px solid #ccc',
+              backgroundColor: '#fff',
+              width: '100%'
+            }}
+          >
+            {Object.keys(AGENCIES).map(agency => (
+              <option key={agency} value={agency}>{AGENCIES[agency].name}</option>
+            ))}
+          </select>
+        </label>
+      </div>
 
       {/* Toggle Chart Button */}
-      <button
-        onClick={toggleChart}
-        style={{
-          marginBottom: 20,
-          padding: '8px 16px',
-          backgroundColor: '#1d4ed8',
-          color: '#fff',
-          border: 'none',
-          borderRadius: 5,
-          cursor: 'pointer'
-        }}
-      >
-        Toggle to {chartType === 'line' ? 'Bar' : 'Line'} Chart
-      </button>
+      <div style={{ padding: '0 10px' }}>
+        <button
+          onClick={toggleChart}
+          style={{
+            padding: '12px 24px',
+            backgroundColor: '#1d4ed8',
+            color: '#fff',
+            border: 'none',
+            borderRadius: '5px',
+            cursor: 'pointer',
+            fontSize: 'clamp(1rem, 3vw, 1.2rem)',
+            width: '100%',
+            maxWidth: '300px',
+            margin: '0 auto 20px',
+            display: 'block'
+          }}
+        >
+          Toggle to {chartType === 'line' ? 'Bar' : 'Line'} Chart
+        </button>
+      </div>
 
       {/* Year Filters */}
-      <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
-        <label>
+      <div style={{ 
+        display: 'flex', 
+        flexDirection: 'column',
+        gap: '15px',
+        marginBottom: '20px',
+        maxWidth: '500px',
+        margin: '0 auto 20px',
+        padding: '0 10px'
+      }}>
+        <label style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '5px',
+          fontSize: 'clamp(1rem, 3vw, 1.2rem)'
+        }}>
           Start Year:
           <select
             value={startYear}
             onChange={e => setStartYear(Number(e.target.value))}
-            style={{ marginLeft: 8 }}
+            style={{
+              padding: '10px',
+              fontSize: 'clamp(1rem, 3vw, 1.2rem)',
+              borderRadius: '5px',
+              border: '1px solid #ccc',
+              backgroundColor: '#fff',
+              width: '100%'
+            }}
           >
             {yearOptions.map(year => (
               <option key={year} value={year}>{year}</option>
             ))}
           </select>
         </label>
-        <label>
+        <label style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '5px',
+          fontSize: 'clamp(1rem, 3vw, 1.2rem)'
+        }}>
           End Year:
           <select
             value={endYear}
             onChange={e => setEndYear(Number(e.target.value))}
-            style={{ marginLeft: 8 }}
+            style={{
+              padding: '10px',
+              fontSize: 'clamp(1rem, 3vw, 1.2rem)',
+              borderRadius: '5px',
+              border: '1px solid #ccc',
+              backgroundColor: '#fff',
+              width: '100%'
+            }}
           >
             {yearOptions.map(year => (
               <option key={year} value={year}>{year}</option>
@@ -123,57 +265,153 @@ export default function App() {
       </div>
 
       {/* Main Chart */}
-      <div style={{ width: '100%', height: 400, maxWidth: '100%', overflowX: 'hidden' }}>
-        <ResponsiveContainer width="90%" height="90%">
+      <div style={{ 
+        width: '100%', 
+        height: 'clamp(300px, 50vh, 500px)',
+        marginBottom: '40px',
+        padding: '0 10px',
+        boxSizing: 'border-box'
+      }}>
+        <ResponsiveContainer width="100%" height="100%">
           {chartType === 'line' ? (
-            <LineChart data={filteredData} margin={{ right: 20 }}>
+            <LineChart data={filteredData} margin={{ top: 20, right: 10, left: 40, bottom: 20 }}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="year" domain={['dataMin', 'dataMax + 1']} />
+              <XAxis 
+                dataKey="year" 
+                domain={['dataMin', 'dataMax + 1']}
+                tick={{ fontSize: 'clamp(0.8rem, 2vw, 1rem)' }}
+              />
               <YAxis 
                 label={{ 
                   value: 'Percentage Difference (%)', 
                   angle: -90, 
-                  position: 'centre' 
-                }} 
+                  position: 'insideLeft',
+                  offset: 10,
+                  style: { 
+                    fontSize: 'clamp(0.8rem, 2vw, 1rem)',
+                    textAnchor: 'middle'
+                  }
+                }}
+                tick={{ fontSize: 'clamp(0.8rem, 2vw, 1rem)' }}
               />
-              <Tooltip formatter={(val) => `${val.toFixed(2)}%`} />
-              <Legend />
+              <Tooltip 
+                formatter={(val) => `${val.toFixed(2)}%`}
+                contentStyle={{
+                  fontSize: 'clamp(0.8rem, 2vw, 1rem)',
+                  padding: '10px'
+                }}
+              />
+              <Legend 
+                wrapperStyle={{
+                  paddingTop: '20px',
+                  fontSize: 'clamp(0.8rem, 2vw, 1rem)'
+                }}
+              />
               <Line type="monotone" dataKey="wage" name="Wage Growth" stroke="#8884d8" />
               <Line type="monotone" dataKey="cpi" name="CPI" stroke="#82ca9d" />
               <Line type="monotone" dataKey="gap" name="Real Wage Change" stroke="#ff7300" strokeDasharray="5 5" />
             </LineChart>
           ) : (
-            <BarChart data={filteredData} margin={{ right: 20 }}>
+            <BarChart data={filteredData} margin={{ top: 20, right: 10, left: 40, bottom: 20 }}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="year" domain={['dataMin', 'dataMax + 1']} />
+              <XAxis 
+                dataKey="year" 
+                domain={['dataMin', 'dataMax + 1']}
+                tick={{ fontSize: 'clamp(0.8rem, 2vw, 1rem)' }}
+              />
               <YAxis 
                 label={{ 
                   value: 'Percentage Difference (%)', 
                   angle: -90, 
-                  position: 'centre' 
-                }} 
+                  position: 'insideLeft',
+                  offset: 10,
+                  style: { 
+                    fontSize: 'clamp(0.8rem, 2vw, 1rem)',
+                    textAnchor: 'middle'
+                  }
+                }}
+                tick={{ fontSize: 'clamp(0.8rem, 2vw, 1rem)' }}
               />
-              <Tooltip formatter={(val) => `${val.toFixed(2)}%`} />
-              <Legend />
-              <Bar dataKey="wage" name="Wage Growth" fill="#8884d8" />
-              <Bar dataKey="cpi" name="CPI" fill="#82ca9d" />
-              <Bar dataKey="gap" name="Real Wage Change" fill="#ff7300" />
+              <Tooltip 
+                formatter={(val) => `${val.toFixed(2)}%`}
+                contentStyle={{
+                  fontSize: 'clamp(0.8rem, 2vw, 1rem)',
+                  padding: '10px'
+                }}
+              />
+              <Legend 
+                wrapperStyle={{
+                  paddingTop: '20px',
+                  fontSize: 'clamp(0.8rem, 2vw, 1rem)'
+                }}
+              />
+              <Bar 
+                dataKey="wage" 
+                name="Wage Growth" 
+                fill="#8884d8" 
+                barSize={30}
+                radius={[4, 4, 0, 0]}
+              />
+              <Bar 
+                dataKey="cpi" 
+                name="CPI" 
+                fill="#82ca9d" 
+                barSize={30}
+                radius={[4, 4, 0, 0]}
+              />
+              <Bar 
+                dataKey="gap" 
+                name="Real Wage Change" 
+                fill="#ff7300" 
+                barSize={30}
+                radius={[4, 4, 0, 0]}
+              />
             </BarChart>
           )}
         </ResponsiveContainer>
       </div>
 
       {/* Salary Projection */}
-      <div className="mt-10 border-t pt-6">
-        <h2 className="text-2xl font-semibold text-gray-800 mb-4">Salary Projection</h2>
+      <div style={{ 
+        marginTop: '40px',
+        borderTop: '1px solid #ccc',
+        paddingTop: '20px',
+        padding: '0 10px'
+      }}>
+        <h2 style={{ 
+          fontSize: 'clamp(1.2rem, 3vw, 1.5rem)',
+          marginBottom: '20px',
+          textAlign: 'center'
+        }}>
+          Salary Projection
+        </h2>
 
-        <div className="flex flex-wrap gap-4 items-center mb-6">
-          <label className="flex items-center gap-2">
-            <span>Starting Year for Projection:</span>
+        <div style={{ 
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '15px',
+          marginBottom: '20px',
+          maxWidth: '500px',
+          margin: '0 auto 20px'
+        }}>
+          <label style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '5px',
+            fontSize: 'clamp(1rem, 3vw, 1.2rem)'
+          }}>
+            Starting Year for Projection:
             <select 
               value={projectionStartYear}
               onChange={(e) => setProjectionStartYear(Number(e.target.value))}
-              className="px-4 py-2 border rounded"
+              style={{
+                padding: '10px',
+                fontSize: 'clamp(1rem, 3vw, 1.2rem)',
+                borderRadius: '5px',
+                border: '1px solid #ccc',
+                backgroundColor: '#fff',
+                width: '100%'
+              }}
             >
               {yearOptions.map(year => (
                 <option key={year} value={year}>{year}</option>
@@ -181,57 +419,90 @@ export default function App() {
             </select>
           </label>
 
-          <label className="flex items-center gap-2">
-            <span>Starting Salary ($):</span>
+          <label style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '5px',
+            fontSize: 'clamp(1rem, 3vw, 1.2rem)'
+          }}>
+            Starting Salary ($):
             <input 
               type="number"
               value={startingSalary}
               onChange={(e) => setStartingSalary(Number(e.target.value))}
-              className="px-4 py-2 border rounded"
+              style={{
+                padding: '10px',
+                fontSize: 'clamp(1rem, 3vw, 1.2rem)',
+                borderRadius: '5px',
+                border: '1px solid #ccc',
+                backgroundColor: '#fff',
+                width: '100%'
+              }}
             />
           </label>
         </div>
 
-        <div style={{ height: 400, maxWidth: '100%', overflowX: 'hidden' }}>
-          <ResponsiveContainer width="90%" height="90%">
-            <LineChart data={salaryProjectionData} margin={{ right: 20, left: 20 }}>
+        <div style={{ 
+          width: '100%', 
+          height: 'clamp(300px, 50vh, 500px)',
+          marginBottom: '40px'
+        }}>
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={salaryProjectionData} margin={{ top: 20, right: 10, left: 10, bottom: 20 }}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="year" domain={['dataMin', 'dataMax + 1']} />
+              <XAxis 
+                dataKey="year" 
+                domain={['dataMin', 'dataMax + 1']}
+                tick={{ fontSize: 'clamp(0.8rem, 2vw, 1rem)' }}
+              />
               <YAxis 
                 label={{ 
-                  value: 'Salary ($)', 
+                  value: 'Salary ($k)', 
                   angle: -90, 
-                  position: 'insideLeft' 
+                  position: 'insideLeft',
+                  style: { fontSize: 'clamp(0.8rem, 2vw, 1rem)' }
+                }}
+                tick={{ fontSize: 'clamp(0.8rem, 2vw, 1rem)' }}
+                tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
+              />
+              <Tooltip 
+                formatter={(val) => `$${(val / 1000).toFixed(1)}k`}
+                contentStyle={{
+                  fontSize: 'clamp(0.8rem, 2vw, 1rem)',
+                  padding: '10px'
                 }}
               />
-              <Tooltip formatter={(val) => `$${val.toFixed(2)}`} />
-              <Legend />
+              <Legend 
+                wrapperStyle={{
+                  paddingTop: '20px',
+                  fontSize: 'clamp(0.8rem, 2vw, 1rem)'
+                }}
+              />
               <Line 
                 type="monotone" 
                 dataKey="expected" 
                 name="Expected (CPI Adjusted)" 
                 stroke="#82ca9d" 
-                strokeWidth={2} 
+                strokeWidth={2}
               />
               <Line 
                 type="monotone" 
                 dataKey="actual" 
                 name="Actual (Wage Growth)" 
                 stroke="#8884d8" 
-                strokeWidth={2} 
+                strokeWidth={2}
               />
               <Line 
                 type="monotone" 
                 dataKey="difference" 
                 name="Difference" 
                 stroke="#ff4d4d" 
-                strokeDasharray="4 4" 
+                strokeDasharray="4 4"
               />
             </LineChart>
           </ResponsiveContainer>
         </div>
       </div>
-
     </div>
   );
 }
