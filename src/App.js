@@ -7,7 +7,7 @@ import {
 // Agency data structure with actual wage increases
 const AGENCIES = {
   'APS': {
-    name: 'Australian Public Service',
+    name: 'Australian Public Service Commission',
     data: [
       { year: 2015, wage: 1.5 }, // 2014-17 EA
       { year: 2016, wage: 2.0 }, // 2014-17 EA
@@ -581,14 +581,14 @@ export default function App() {
               margin: '10px 0'
             }}>
               <li style={{ marginBottom: '8px' }}>
-                • APS Enterprise Agreement 2024-25:&nbsp;
+                • APSC Enterprise Agreement 2024-2027:&nbsp;
                 <a 
-                  href="https://www.apsc.gov.au/working-aps/enterprise-agreements/aps-enterprise-agreement-2024-25" 
+                  href="https://www.apsc.gov.au/sites/default/files/2024-03/APSC%20Enterprise%20Agreement%202024-2027.pdf" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   style={{ color: '#1d4ed8' }}
                 >
-                  APSC Website
+                  APSC EA PDF
                 </a>
               </li>
               <li style={{ marginBottom: '8px' }}>
