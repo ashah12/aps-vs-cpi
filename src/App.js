@@ -73,22 +73,22 @@ const AGENCIES = {
 
 // ABS CPI data for June quarter
 const CPIData = {
-  2015: 1.5,
-  2016: 1.0,
-  2017: 1.9,
-  2018: 2.1,
-  2019: 1.6,
-  2020: -0.3,
-  2021: 3.8,
-  2022: 6.1,
-  2023: 6.0,
-  2024: 3.8, 
-  2025: 2.8, // Projected
-  2026: 2.5, // Projected
-  2027: 2.5, // Projected
-  2028: 2.5, // Projected
-  2029: 2.5, // Projected
-  2030: 2.5  // Projected
+  2015: { value: 1.5, isProjected: false },
+  2016: { value: 1.0, isProjected: false },
+  2017: { value: 1.9, isProjected: false },
+  2018: { value: 2.1, isProjected: false },
+  2019: { value: 1.6, isProjected: false },
+  2020: { value: -0.3, isProjected: false },
+  2021: { value: 3.8, isProjected: false },
+  2022: { value: 6.1, isProjected: false },
+  2023: { value: 6.0, isProjected: false },
+  2024: { value: 3.8, isProjected: false },
+  2025: { value: 2.8, isProjected: true },
+  2026: { value: 2.5, isProjected: true },
+  2027: { value: 2.5, isProjected: true },
+  2028: { value: 2.5, isProjected: true },
+  2029: { value: 2.5, isProjected: true },
+  2030: { value: 2.5, isProjected: true }
 };
 
 export default function App() {
@@ -116,8 +116,9 @@ export default function App() {
       .filter(d => d.year >= startYear && d.year <= endYear)
       .map(d => ({
         ...d,
-        cpi: CPIData[d.year] || 0,
-        gap: d.wage - (CPIData[d.year] || 0) // Real wage change
+        cpi: CPIData[d.year]?.value || 0,
+        isProjected: CPIData[d.year]?.isProjected || false,
+        gap: d.wage - (CPIData[d.year]?.value || 0) // Real wage change
       }));
   }, [startYear, endYear, selectedAgency]);
 
@@ -137,7 +138,7 @@ export default function App() {
       .filter(d => d.year <= endYear)
       .map((d, idx) => {
         if (idx > 0) {
-          expected *= (1 + (CPIData[d.year] || 0) / 100);
+          expected *= (1 + (CPIData[d.year]?.value || 0) / 100);
           actual *= (1 + d.wage / 100);
         }
 
@@ -310,7 +311,10 @@ export default function App() {
                 width={40}
               />
               <Tooltip 
-                formatter={(val) => `${val.toFixed(2)}%`}
+                formatter={(val, name, props) => {
+                  const isProjected = props.payload.isProjected;
+                  return [`${val.toFixed(2)}%${isProjected ? ' (Projected)' : ''}`, name];
+                }}
                 contentStyle={{
                   fontSize: 'clamp(0.8rem, 2vw, 1rem)',
                   padding: '10px'
@@ -323,7 +327,13 @@ export default function App() {
                 }}
               />
               <Line type="monotone" dataKey="wage" name="Wage Growth" stroke="#8884d8" />
-              <Line type="monotone" dataKey="cpi" name="CPI" stroke="#82ca9d" />
+              <Line 
+                type="monotone" 
+                dataKey="cpi" 
+                name="CPI" 
+                stroke="#82ca9d"
+                strokeDasharray={d => d.isProjected ? "5 5" : "0"}
+              />
               <Line type="monotone" dataKey="gap" name="Real Wage Change" stroke="#ff7300" strokeDasharray="5 5" />
             </LineChart>
           ) : (
@@ -349,7 +359,10 @@ export default function App() {
                 width={40}
               />
               <Tooltip 
-                formatter={(val) => `${val.toFixed(2)}%`}
+                formatter={(val, name, props) => {
+                  const isProjected = props.payload.isProjected;
+                  return [`${val.toFixed(2)}%${isProjected ? ' (Projected)' : ''}`, name];
+                }}
                 contentStyle={{
                   fontSize: 'clamp(0.8rem, 2vw, 1rem)',
                   padding: '10px'
@@ -374,6 +387,7 @@ export default function App() {
                 fill="#82ca9d" 
                 barSize={30}
                 radius={[4, 4, 0, 0]}
+                fillOpacity={d => d.isProjected ? 0.5 : 1}
               />
               <Bar 
                 dataKey="gap" 
@@ -385,6 +399,16 @@ export default function App() {
             </BarChart>
           )}
         </ResponsiveContainer>
+      </div>
+
+      {/* Projection Note */}
+      <div style={{ 
+        textAlign: 'center',
+        fontSize: 'clamp(0.8rem, 2vw, 1rem)',
+        color: '#666',
+        marginBottom: '20px'
+      }}>
+        Note: CPI values for 2024 and beyond are projected estimates
       </div>
 
       {/* Salary Projection */}
