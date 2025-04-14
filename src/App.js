@@ -141,134 +141,127 @@ export default function App() {
     }}>
       <h2 style={{ 
         fontSize: 'clamp(1.5rem, 4vw, 2rem)',
-        marginBottom: '20px',
+        marginBottom: '15px',
         textAlign: 'center',
         padding: '0 10px'
       }}>
         {AGENCIES[selectedAgency].name} Wage Growth vs CPI
       </h2>
 
-      {/* Agency Selector */}
+      {/* Controls Row */}
       <div style={{ 
-        marginBottom: '20px',
         display: 'flex',
-        flexDirection: 'column',
+        flexDirection: 'row',
+        flexWrap: 'wrap',
         gap: '10px',
-        padding: '0 10px'
+        marginBottom: '15px',
+        justifyContent: 'center',
+        alignItems: 'center'
       }}>
-        <label style={{ 
+        {/* Agency Selector */}
+        <div style={{ 
           display: 'flex',
-          flexDirection: 'column',
+          alignItems: 'center',
           gap: '5px',
-          fontSize: 'clamp(1rem, 3vw, 1.2rem)'
+          flex: '0 1 auto'
         }}>
-          Select Agency:
+          <span style={{ 
+            fontSize: 'clamp(1rem, 3vw, 1.2rem)',
+            whiteSpace: 'nowrap'
+          }}>Agency:</span>
           <select
             value={selectedAgency}
             onChange={e => setSelectedAgency(e.target.value)}
             style={{ 
-              padding: '10px',
+              padding: '8px',
               fontSize: 'clamp(1rem, 3vw, 1.2rem)',
               borderRadius: '5px',
               border: '1px solid #ccc',
               backgroundColor: '#fff',
-              width: '100%'
+              minWidth: '200px'
             }}
           >
             {Object.keys(AGENCIES).map(agency => (
               <option key={agency} value={agency}>{AGENCIES[agency].name}</option>
             ))}
           </select>
-        </label>
-      </div>
+        </div>
 
-      {/* Toggle Chart Button */}
-      <div style={{ padding: '0 10px' }}>
+        {/* Year Filters */}
+        <div style={{ 
+          display: 'flex',
+          alignItems: 'center',
+          gap: '5px',
+          flex: '0 1 auto'
+        }}>
+          <span style={{ 
+            fontSize: 'clamp(1rem, 3vw, 1.2rem)',
+            whiteSpace: 'nowrap'
+          }}>Years:</span>
+          <div style={{ display: 'flex', gap: '5px' }}>
+            <select
+              value={startYear}
+              onChange={e => setStartYear(Number(e.target.value))}
+              style={{
+                padding: '8px',
+                fontSize: 'clamp(1rem, 3vw, 1.2rem)',
+                borderRadius: '5px',
+                border: '1px solid #ccc',
+                backgroundColor: '#fff',
+                minWidth: '100px'
+              }}
+            >
+              {yearOptions.map(year => (
+                <option key={year} value={year}>{year}</option>
+              ))}
+            </select>
+            <span style={{ 
+              fontSize: 'clamp(1rem, 3vw, 1.2rem)',
+              display: 'flex',
+              alignItems: 'center'
+            }}>to</span>
+            <select
+              value={endYear}
+              onChange={e => setEndYear(Number(e.target.value))}
+              style={{
+                padding: '8px',
+                fontSize: 'clamp(1rem, 3vw, 1.2rem)',
+                borderRadius: '5px',
+                border: '1px solid #ccc',
+                backgroundColor: '#fff',
+                minWidth: '100px'
+              }}
+            >
+              {yearOptions.map(year => (
+                <option key={year} value={year}>{year}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {/* Toggle Chart Button */}
         <button
           onClick={toggleChart}
           style={{
-            padding: '12px 24px',
+            padding: '8px 16px',
             backgroundColor: '#1d4ed8',
             color: '#fff',
             border: 'none',
             borderRadius: '5px',
             cursor: 'pointer',
             fontSize: 'clamp(1rem, 3vw, 1.2rem)',
-            width: '100%',
-            maxWidth: '300px',
-            margin: '0 auto 20px',
-            display: 'block'
+            minWidth: '120px'
           }}
         >
           Toggle to {chartType === 'line' ? 'Bar' : 'Line'} Chart
         </button>
       </div>
 
-      {/* Year Filters */}
-      <div style={{ 
-        display: 'flex', 
-        flexDirection: 'column',
-        gap: '15px',
-        marginBottom: '20px',
-        maxWidth: '500px',
-        margin: '0 auto 20px',
-        padding: '0 10px'
-      }}>
-        <label style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '5px',
-          fontSize: 'clamp(1rem, 3vw, 1.2rem)'
-        }}>
-          Start Year:
-          <select
-            value={startYear}
-            onChange={e => setStartYear(Number(e.target.value))}
-            style={{
-              padding: '10px',
-              fontSize: 'clamp(1rem, 3vw, 1.2rem)',
-              borderRadius: '5px',
-              border: '1px solid #ccc',
-              backgroundColor: '#fff',
-              width: '100%'
-            }}
-          >
-            {yearOptions.map(year => (
-              <option key={year} value={year}>{year}</option>
-            ))}
-          </select>
-        </label>
-        <label style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '5px',
-          fontSize: 'clamp(1rem, 3vw, 1.2rem)'
-        }}>
-          End Year:
-          <select
-            value={endYear}
-            onChange={e => setEndYear(Number(e.target.value))}
-            style={{
-              padding: '10px',
-              fontSize: 'clamp(1rem, 3vw, 1.2rem)',
-              borderRadius: '5px',
-              border: '1px solid #ccc',
-              backgroundColor: '#fff',
-              width: '100%'
-            }}
-          >
-            {yearOptions.map(year => (
-              <option key={year} value={year}>{year}</option>
-            ))}
-          </select>
-        </label>
-      </div>
-
       {/* Main Chart */}
       <div style={{ 
         width: '100%', 
         height: 'clamp(300px, 50vh, 500px)',
-        marginBottom: '40px',
+        marginBottom: '20px',
         padding: '0 10px',
         boxSizing: 'border-box'
       }}>
@@ -373,73 +366,81 @@ export default function App() {
 
       {/* Salary Projection */}
       <div style={{ 
-        marginTop: '40px',
+        marginTop: '20px',
         borderTop: '1px solid #ccc',
-        paddingTop: '20px',
+        paddingTop: '15px',
         padding: '0 10px'
       }}>
         <h2 style={{ 
           fontSize: 'clamp(1.2rem, 3vw, 1.5rem)',
-          marginBottom: '20px',
+          marginBottom: '15px',
           textAlign: 'center'
         }}>
           Salary Projection
         </h2>
 
+        {/* Projection Controls */}
         <div style={{ 
           display: 'flex',
-          flexDirection: 'column',
-          gap: '15px',
-          marginBottom: '20px',
-          maxWidth: '500px',
-          margin: '0 auto 20px'
+          flexDirection: 'row',
+          flexWrap: 'wrap',
+          gap: '10px',
+          marginBottom: '15px',
+          justifyContent: 'center',
+          alignItems: 'center'
         }}>
-          <label style={{
+          <div style={{ 
             display: 'flex',
-            flexDirection: 'column',
+            alignItems: 'center',
             gap: '5px',
-            fontSize: 'clamp(1rem, 3vw, 1.2rem)'
+            flex: '0 1 auto'
           }}>
-            Starting Year for Projection:
+            <span style={{ 
+              fontSize: 'clamp(1rem, 3vw, 1.2rem)',
+              whiteSpace: 'nowrap'
+            }}>Projection Year:</span>
             <select 
               value={projectionStartYear}
               onChange={(e) => setProjectionStartYear(Number(e.target.value))}
               style={{
-                padding: '10px',
+                padding: '8px',
                 fontSize: 'clamp(1rem, 3vw, 1.2rem)',
                 borderRadius: '5px',
                 border: '1px solid #ccc',
                 backgroundColor: '#fff',
-                width: '100%'
+                minWidth: '100px'
               }}
             >
               {yearOptions.map(year => (
                 <option key={year} value={year}>{year}</option>
               ))}
             </select>
-          </label>
+          </div>
 
-          <label style={{
+          <div style={{ 
             display: 'flex',
-            flexDirection: 'column',
+            alignItems: 'center',
             gap: '5px',
-            fontSize: 'clamp(1rem, 3vw, 1.2rem)'
+            flex: '0 1 auto'
           }}>
-            Starting Salary ($):
+            <span style={{ 
+              fontSize: 'clamp(1rem, 3vw, 1.2rem)',
+              whiteSpace: 'nowrap'
+            }}>Starting Salary:</span>
             <input 
               type="number"
               value={startingSalary}
               onChange={(e) => setStartingSalary(Number(e.target.value))}
               style={{
-                padding: '10px',
+                padding: '8px',
                 fontSize: 'clamp(1rem, 3vw, 1.2rem)',
                 borderRadius: '5px',
                 border: '1px solid #ccc',
                 backgroundColor: '#fff',
-                width: '100%'
+                minWidth: '150px'
               }}
             />
-          </label>
+          </div>
         </div>
 
         <div style={{ 
