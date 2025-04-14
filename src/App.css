@@ -36,3 +36,150 @@
     transform: rotate(360deg);
   }
 }
+
+.app-container {
+  width: 100%;
+  padding: 5px;
+  max-width: 100%;
+  margin: 0 auto;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+.app-title {
+  font-size: clamp(1.3rem, 4vw, 1.8rem);
+  margin-bottom: 15px;
+  text-align: center;
+  padding: 0 5px;
+}
+
+.controls-row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 15px;
+  justify-content: center;
+  align-items: center;
+  padding: 0 5px;
+}
+
+.control-group {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex: 1 1 auto;
+  min-width: 150px;
+  max-width: 300px;
+}
+
+.control-label {
+  font-size: clamp(0.9rem, 3vw, 1.1rem);
+  white-space: nowrap;
+}
+
+.control-select {
+  padding: 8px;
+  font-size: clamp(0.9rem, 3vw, 1.1rem);
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.year-range-group {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  width: 100%;
+}
+
+.year-range-select {
+  flex: 1;
+  min-width: 0;
+}
+
+.year-range-label {
+  font-size: clamp(0.9rem, 3vw, 1.1rem);
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 30px;
+}
+
+.toggle-button {
+  padding: 8px 16px;
+  background-color: #1d4ed8;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: clamp(0.9rem, 3vw, 1.1rem);
+  width: 100%;
+  max-width: 300px;
+}
+
+.chart-container {
+  width: 100%;
+  height: clamp(300px, 50vh, 500px);
+  margin-bottom: 20px;
+  padding: 0 5px;
+  box-sizing: border-box;
+}
+
+.projection-note {
+  text-align: center;
+  font-size: clamp(0.8rem, 2vw, 1rem);
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.salary-projection {
+  margin-top: 20px;
+  border-top: 1px solid #ccc;
+  padding-top: 15px;
+  padding: 0 5px;
+}
+
+.projection-title {
+  font-size: clamp(1.1rem, 3vw, 1.4rem);
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.references {
+  margin-top: 40px;
+  padding: 20px;
+  border-top: 1px solid #ccc;
+  font-size: clamp(0.8rem, 2vw, 1rem);
+  color: #666;
+}
+
+.references-title {
+  font-size: clamp(1rem, 2.5vw, 1.2rem);
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.references-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.references-item {
+  margin-bottom: 8px;
+}
+
+.references-link {
+  color: #1d4ed8;
+  text-decoration: none;
+}
+
+.references-link:hover {
+  text-decoration: underline;
+}
