@@ -316,17 +316,17 @@ export default function App() {
   return (
     <div style={{ 
       width: '100%', 
-      padding: '10px',
+      padding: '5px',
       maxWidth: '100%',
       margin: '0 auto',
       overflowX: 'hidden',
       boxSizing: 'border-box'
     }}>
       <h2 style={{ 
-        fontSize: 'clamp(1.5rem, 4vw, 2rem)',
+        fontSize: 'clamp(1.3rem, 4vw, 1.8rem)',
         marginBottom: '15px',
         textAlign: 'center',
-        padding: '0 10px'
+        padding: '0 5px'
       }}>
         {AGENCIES[selectedAgency].name} Wage Growth vs CPI
       </h2>
@@ -336,20 +336,23 @@ export default function App() {
         display: 'flex',
         flexDirection: 'row',
         flexWrap: 'wrap',
-        gap: '10px',
+        gap: '8px',
         marginBottom: '15px',
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        padding: '0 5px'
       }}>
         {/* Agency Selector */}
         <div style={{ 
           display: 'flex',
           alignItems: 'center',
           gap: '5px',
-          flex: '0 1 auto'
+          flex: '1 1 auto',
+          minWidth: '150px',
+          maxWidth: '300px'
         }}>
           <span style={{ 
-            fontSize: 'clamp(1rem, 3vw, 1.2rem)',
+            fontSize: 'clamp(0.9rem, 3vw, 1.1rem)',
             whiteSpace: 'nowrap'
           }}>Agency:</span>
           <select
@@ -357,11 +360,14 @@ export default function App() {
             onChange={e => setSelectedAgency(e.target.value)}
             style={{ 
               padding: '8px',
-              fontSize: 'clamp(1rem, 3vw, 1.2rem)',
+              fontSize: 'clamp(0.9rem, 3vw, 1.1rem)',
               borderRadius: '5px',
               border: '1px solid #ccc',
               backgroundColor: '#fff',
-              minWidth: '200px'
+              width: '100%',
+              maxWidth: '100%',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis'
             }}
           >
             {Object.keys(AGENCIES).map(agency => (
@@ -375,23 +381,25 @@ export default function App() {
           display: 'flex',
           alignItems: 'center',
           gap: '5px',
-          flex: '0 1 auto'
+          flex: '1 1 auto',
+          minWidth: '150px',
+          maxWidth: '300px'
         }}>
           <span style={{ 
-            fontSize: 'clamp(1rem, 3vw, 1.2rem)',
+            fontSize: 'clamp(0.9rem, 3vw, 1.1rem)',
             whiteSpace: 'nowrap'
           }}>Years:</span>
-          <div style={{ display: 'flex', gap: '5px' }}>
+          <div style={{ display: 'flex', gap: '5px', width: '100%' }}>
             <select
               value={startYear}
               onChange={e => setStartYear(Number(e.target.value))}
               style={{
                 padding: '8px',
-                fontSize: 'clamp(1rem, 3vw, 1.2rem)',
+                fontSize: 'clamp(0.9rem, 3vw, 1.1rem)',
                 borderRadius: '5px',
                 border: '1px solid #ccc',
                 backgroundColor: '#fff',
-                minWidth: '100px'
+                width: '45%'
               }}
             >
               {yearOptions.map(year => (
@@ -399,7 +407,7 @@ export default function App() {
               ))}
             </select>
             <span style={{ 
-              fontSize: 'clamp(1rem, 3vw, 1.2rem)',
+              fontSize: 'clamp(0.9rem, 3vw, 1.1rem)',
               display: 'flex',
               alignItems: 'center'
             }}>to</span>
@@ -408,11 +416,11 @@ export default function App() {
               onChange={e => setEndYear(Number(e.target.value))}
               style={{
                 padding: '8px',
-                fontSize: 'clamp(1rem, 3vw, 1.2rem)',
+                fontSize: 'clamp(0.9rem, 3vw, 1.1rem)',
                 borderRadius: '5px',
                 border: '1px solid #ccc',
                 backgroundColor: '#fff',
-                minWidth: '100px'
+                width: '45%'
               }}
             >
               {yearOptions.map(year => (
@@ -432,8 +440,9 @@ export default function App() {
             border: 'none',
             borderRadius: '5px',
             cursor: 'pointer',
-            fontSize: 'clamp(1rem, 3vw, 1.2rem)',
-            minWidth: '120px'
+            fontSize: 'clamp(0.9rem, 3vw, 1.1rem)',
+            width: '100%',
+            maxWidth: '300px'
           }}
         >
           Toggle to {chartType === 'line' ? 'Bar' : 'Line'} Chart
@@ -445,7 +454,7 @@ export default function App() {
         width: '100%', 
         height: 'clamp(300px, 50vh, 500px)',
         marginBottom: '20px',
-        padding: '0 10px',
+        padding: '0 5px',
         boxSizing: 'border-box'
       }}>
         <ResponsiveContainer width="100%" height="100%">
@@ -577,10 +586,10 @@ export default function App() {
         marginTop: '20px',
         borderTop: '1px solid #ccc',
         paddingTop: '15px',
-        padding: '0 10px'
+        padding: '0 5px'
       }}>
         <h2 style={{ 
-          fontSize: 'clamp(1.2rem, 3vw, 1.5rem)',
+          fontSize: 'clamp(1.1rem, 3vw, 1.4rem)',
           marginBottom: '15px',
           textAlign: 'center'
         }}>
@@ -592,7 +601,7 @@ export default function App() {
           display: 'flex',
           flexDirection: 'row',
           flexWrap: 'wrap',
-          gap: '10px',
+          gap: '8px',
           marginBottom: '15px',
           justifyContent: 'center',
           alignItems: 'center'
@@ -600,10 +609,13 @@ export default function App() {
           <div style={{ 
             display: 'flex',
             alignItems: 'center',
-            gap: '5px'
+            gap: '5px',
+            flex: '1 1 auto',
+            minWidth: '120px',
+            maxWidth: '180px'
           }}>
             <span style={{ 
-              fontSize: 'clamp(1rem, 3vw, 1.2rem)',
+              fontSize: 'clamp(0.9rem, 3vw, 1.1rem)',
               whiteSpace: 'nowrap'
             }}>Year:</span>
             <select 
@@ -611,11 +623,11 @@ export default function App() {
               onChange={(e) => setProjectionStartYear(Number(e.target.value))}
               style={{
                 padding: '8px',
-                fontSize: 'clamp(1rem, 3vw, 1.2rem)',
+                fontSize: 'clamp(0.9rem, 3vw, 1.1rem)',
                 borderRadius: '5px',
                 border: '1px solid #ccc',
                 backgroundColor: '#fff',
-                minWidth: '100px'
+                width: '100%'
               }}
             >
               {yearOptions.map(year => (
@@ -628,10 +640,13 @@ export default function App() {
           <div style={{ 
             display: 'flex',
             alignItems: 'center',
-            gap: '5px'
+            gap: '5px',
+            flex: '1 1 auto',
+            minWidth: '120px',
+            maxWidth: '180px'
           }}>
             <span style={{ 
-              fontSize: 'clamp(1rem, 3vw, 1.2rem)',
+              fontSize: 'clamp(0.9rem, 3vw, 1.1rem)',
               whiteSpace: 'nowrap'
             }}>Level:</span>
             <select
@@ -639,14 +654,14 @@ export default function App() {
               onChange={handleAPSLevelChange}
               style={{
                 padding: '8px',
-                fontSize: 'clamp(1rem, 3vw, 1.2rem)',
+                fontSize: 'clamp(0.9rem, 3vw, 1.1rem)',
                 borderRadius: '5px',
                 border: '1px solid #ccc',
                 backgroundColor: '#fff',
-                minWidth: '100px'
+                width: '100%'
               }}
             >
-              <option value="">Select Level</option>
+              <option value="">Select</option>
               {SALARY_DATA[selectedAgency] && Object.keys(SALARY_DATA[selectedAgency]).map(level => (
                 <option key={level} value={level}>{level}</option>
               ))}
@@ -658,10 +673,13 @@ export default function App() {
             <div style={{ 
               display: 'flex',
               alignItems: 'center',
-              gap: '5px'
+              gap: '5px',
+              flex: '1 1 auto',
+              minWidth: '120px',
+              maxWidth: '180px'
             }}>
               <span style={{ 
-                fontSize: 'clamp(1rem, 3vw, 1.2rem)',
+                fontSize: 'clamp(0.9rem, 3vw, 1.1rem)',
                 whiteSpace: 'nowrap'
               }}>Step:</span>
               <select
@@ -669,11 +687,11 @@ export default function App() {
                 onChange={handleAPSStepChange}
                 style={{
                   padding: '8px',
-                  fontSize: 'clamp(1rem, 3vw, 1.2rem)',
+                  fontSize: 'clamp(0.9rem, 3vw, 1.1rem)',
                   borderRadius: '5px',
                   border: '1px solid #ccc',
                   backgroundColor: '#fff',
-                  minWidth: '100px'
+                  width: '100%'
                 }}
               >
                 {SALARY_DATA[selectedAgency][selectedAPSLevel] && 
@@ -687,10 +705,13 @@ export default function App() {
           <div style={{ 
             display: 'flex',
             alignItems: 'center',
-            gap: '5px'
+            gap: '5px',
+            flex: '1 1 auto',
+            minWidth: '120px',
+            maxWidth: '180px'
           }}>
             <span style={{ 
-              fontSize: 'clamp(1rem, 3vw, 1.2rem)',
+              fontSize: 'clamp(0.9rem, 3vw, 1.1rem)',
               whiteSpace: 'nowrap'
             }}>Salary:</span>
             <input 
@@ -699,11 +720,11 @@ export default function App() {
               onChange={(e) => setStartingSalary(Number(e.target.value))}
               style={{
                 padding: '8px',
-                fontSize: 'clamp(1rem, 3vw, 1.2rem)',
+                fontSize: 'clamp(0.9rem, 3vw, 1.1rem)',
                 borderRadius: '5px',
                 border: '1px solid #ccc',
                 backgroundColor: '#fff',
-                minWidth: '120px'
+                width: '100%'
               }}
             />
           </div>
