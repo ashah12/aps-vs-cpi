@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "APS CPI Comparison",
+  "name": "APS Wage vs CPI Comparison",
   "icons": [
     {
       "src": "favicon.ico",
