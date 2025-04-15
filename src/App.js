@@ -3,7 +3,6 @@ import './App.css';
 import LineChart from './components/LineChart';
 import BarChart from './components/BarChart';
 import SalaryProjectionChart from './components/SalaryProjectionChart';
-import { AGENCIES } from './constants/data';
 import salaryData from './data/salary-data.json';
 
 // ABS CPI data for June quarter (annual)
@@ -44,24 +43,50 @@ const CPIData = {
 function App() {
   const [chartType, setChartType] = useState('line');
   const [startYear, setStartYear] = useState(2015);
-  const [endYear, setEndYear] = useState(2030);
+  const [endYear, setEndYear] = useState(2024);
   const [projectionStartYear, setProjectionStartYear] = useState(2015);
   const [selectedAgency, setSelectedAgency] = useState('APS');
   const [yearOptions, setYearOptions] = useState([]);
   const [selectedLevel, setSelectedLevel] = useState('APS6');
   const [selectedStep, setSelectedStep] = useState('Step 1');
-  const [startingSalary, setStartingSalary] = useState(
-    salaryData.agencies[selectedAgency].years[projectionStartYear][selectedLevel][selectedStep]
-  );
+  const [startingSalary, setStartingSalary] = useState(() => {
+    // Check if the agency exists and has data
+    if (!salaryData.agencies[selectedAgency]) {
+      console.error(`No salary data found for agency: ${selectedAgency}`);
+      return 0;
+    }
+
+    const agencyData = salaryData.agencies[selectedAgency];
+    const years = Object.keys(agencyData.years).map(Number).sort((a, b) => a - b);
+    const latestYear = years[years.length - 1];
+
+    // Check if we have data for the selected level and step
+    if (agencyData.years[latestYear] && 
+        agencyData.years[latestYear][selectedLevel] && 
+        agencyData.years[latestYear][selectedLevel][selectedStep]) {
+      return agencyData.years[latestYear][selectedLevel][selectedStep];
+    }
+
+    console.error(`No salary data found for ${selectedAgency} ${selectedLevel} ${selectedStep} in year ${latestYear}`);
+    return 0;
+  });
 
   const toggleChart = () => {
     setChartType(prev => (prev === 'line' ? 'bar' : 'line'));
   };
 
-  // Load data on mount and when agency changes
+  // Load years on mount and when agency changes
   useEffect(() => {
-    const years = Object.keys(salaryData.agencies[selectedAgency].years).map(Number).sort((a, b) => a - b);
+    if (!salaryData.agencies[selectedAgency]) {
+      console.error(`No salary data found for agency: ${selectedAgency}`);
+      return;
+    }
+
+    const years = Object.keys(salaryData.agencies[selectedAgency].years)
+      .map(Number)
+      .sort((a, b) => a - b);
     setYearOptions(years);
+    
     // Set default start year to 2000 if it's available
     if (years.includes(2000)) {
       setStartYear(2000);
@@ -191,8 +216,8 @@ function App() {
             onChange={handleAgencyChange}
             className="control-select"
           >
-            {Object.keys(AGENCIES).map(agency => (
-              <option key={agency} value={agency}>{AGENCIES[agency].name}</option>
+            {Object.keys(salaryData.agencies).map(agency => (
+              <option key={agency} value={agency}>{salaryData.agencies[agency].name}</option>
             ))}
           </select>
         </div>
