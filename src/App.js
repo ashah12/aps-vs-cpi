@@ -155,7 +155,7 @@ function App() {
         isFuture: year > currentYear
       };
     });
-  }, [selectedAgency, projectionStartYear, endYear, selectedLevel, selectedStep]);
+  }, [selectedAgency, projectionStartYear, endYear, selectedLevel, selectedStep, startingSalary]);
 
   return (
     <div className="app-container">
