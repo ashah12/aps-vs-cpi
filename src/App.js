@@ -3,7 +3,43 @@ import './App.css';
 import LineChart from './components/LineChart';
 import BarChart from './components/BarChart';
 import SalaryProjectionChart from './components/SalaryProjectionChart';
-import { SALARY_DATA, AGENCIES, CPIData } from './constants/data';
+import { AGENCIES } from './constants/data';
+import salaryData from './data/salary-data.json';
+
+// ABS CPI data for June quarter (annual)
+const CPIData = {
+  2000: { value: 3.0, isProjected: false },
+  2001: { value: 6.0, isProjected: false },
+  2002: { value: 2.8, isProjected: false },
+  2003: { value: 2.8, isProjected: false },
+  2004: { value: 2.5, isProjected: false },
+  2005: { value: 2.5, isProjected: false },
+  2006: { value: 4.0, isProjected: false },
+  2007: { value: 2.1, isProjected: false },
+  2008: { value: 4.5, isProjected: false },
+  2009: { value: 1.5, isProjected: false },
+  2010: { value: 3.1, isProjected: false },
+  2011: { value: 3.6, isProjected: false },
+  2012: { value: 1.2, isProjected: false },
+  2013: { value: 2.4, isProjected: false },
+  2014: { value: 3.0, isProjected: false },
+  2015: { value: 1.5, isProjected: false },
+  2016: { value: 1.0, isProjected: false },
+  2017: { value: 1.9, isProjected: false },
+  2018: { value: 2.1, isProjected: false },
+  2019: { value: 1.6, isProjected: false },
+  2020: { value: -0.3, isProjected: false },
+  2021: { value: 3.8, isProjected: false },
+  2022: { value: 6.1, isProjected: false },
+  2023: { value: 6.0, isProjected: false },
+  2024: { value: 3.8, isProjected: false },
+  2025: { value: 2.8, isProjected: true },
+  2026: { value: 2.5, isProjected: true },
+  2027: { value: 2.5, isProjected: true },
+  2028: { value: 2.5, isProjected: true },
+  2029: { value: 2.5, isProjected: true },
+  2030: { value: 2.5, isProjected: true }
+};
 
 function App() {
   const [chartType, setChartType] = useState('line');
@@ -12,9 +48,11 @@ function App() {
   const [projectionStartYear, setProjectionStartYear] = useState(2015);
   const [selectedAgency, setSelectedAgency] = useState('APS');
   const [yearOptions, setYearOptions] = useState([]);
-  const [startingSalary, setStartingSalary] = useState(60000);
   const [selectedLevel, setSelectedLevel] = useState('APS6');
   const [selectedStep, setSelectedStep] = useState('Step 1');
+  const [startingSalary, setStartingSalary] = useState(
+    salaryData.agencies[selectedAgency].years[projectionStartYear][selectedLevel][selectedStep]
+  );
 
   const toggleChart = () => {
     setChartType(prev => (prev === 'line' ? 'bar' : 'line'));
@@ -22,67 +60,107 @@ function App() {
 
   // Load data on mount and when agency changes
   useEffect(() => {
-    const agencyData = AGENCIES[selectedAgency].data;
-    setYearOptions(agencyData.map(d => d.year));
+    const years = Object.keys(salaryData.agencies[selectedAgency].years).map(Number).sort((a, b) => a - b);
+    setYearOptions(years);
+    // Set default start year to 2000 if it's available
+    if (years.includes(2000)) {
+      setStartYear(2000);
+    }
   }, [selectedAgency]);
 
+  // Handle level change
+  const handleLevelChange = (e) => {
+    const newLevel = e.target.value;
+    setSelectedLevel(newLevel);
+    setSelectedStep('Step 1'); // Reset to first step
+    // Update starting salary based on new level and first step
+    setStartingSalary(salaryData.agencies[selectedAgency].years[projectionStartYear][newLevel]['Step 1']);
+  };
+
+  // Handle step change
+  const handleStepChange = (e) => {
+    const newStep = e.target.value;
+    setSelectedStep(newStep);
+    // Update starting salary based on new step
+    setStartingSalary(salaryData.agencies[selectedAgency].years[projectionStartYear][selectedLevel][newStep]);
+  };
+
+  // Handle agency change
+  const handleAgencyChange = (e) => {
+    const newAgency = e.target.value;
+    setSelectedAgency(newAgency);
+    // Reset to default level and step
+    setSelectedLevel('APS6');
+    setSelectedStep('Step 1');
+    // Update starting salary based on new agency's default level and step
+    setStartingSalary(salaryData.agencies[newAgency].years[projectionStartYear]['APS6']['Step 1']);
+  };
+
+  // Handle projection start year change
+  const handleProjectionStartYearChange = (e) => {
+    const newYear = Number(e.target.value);
+    setProjectionStartYear(newYear);
+    // Update starting salary based on new year
+    setStartingSalary(salaryData.agencies[selectedAgency].years[newYear][selectedLevel][selectedStep]);
+  };
+
   const filteredData = useMemo(() => {
-    const agencyData = AGENCIES[selectedAgency].data;
-    return agencyData
-      .filter(d => d.year >= startYear && d.year <= endYear)
-      .map(d => ({
-        ...d,
-        cpi: CPIData[d.year]?.value || 0,
-        isProjected: CPIData[d.year]?.isProjected || false,
-        gap: d.wage - (CPIData[d.year]?.value || 0) // Real wage change
-      }));
-  }, [startYear, endYear, selectedAgency]);
+    const years = Object.keys(salaryData.agencies[selectedAgency].years)
+      .map(Number)
+      .filter(year => year >= startYear && year <= endYear)
+      .sort((a, b) => a - b);
+
+    return years.map((year, index) => {
+      const currentSalary = salaryData.agencies[selectedAgency].years[year][selectedLevel][selectedStep];
+      let wageGrowth = 0;
+      
+      if (index > 0) {
+        const prevYear = years[index - 1];
+        const prevSalary = salaryData.agencies[selectedAgency].years[prevYear][selectedLevel][selectedStep];
+        wageGrowth = ((currentSalary - prevSalary) / prevSalary) * 100;
+      }
+
+      return {
+        year,
+        wage: wageGrowth,
+        cpi: CPIData[year]?.value || 0,
+        isProjected: CPIData[year]?.isProjected || false,
+        gap: wageGrowth - (CPIData[year]?.value || 0) // Real wage change
+      };
+    });
+  }, [startYear, endYear, selectedAgency, selectedLevel, selectedStep]);
 
   const salaryProjectionData = useMemo(() => {
     if (!startingSalary || !projectionStartYear) return [];
 
     let expected = startingSalary;
     let actual = startingSalary;
-    const agencyData = AGENCIES[selectedAgency].data;
-    const startIndex = agencyData.findIndex(d => d.year === projectionStartYear);
+    const years = Object.keys(salaryData.agencies[selectedAgency].years)
+      .map(Number)
+      .filter(year => year >= projectionStartYear && year <= endYear)
+      .sort((a, b) => a - b);
     const currentYear = new Date().getFullYear();
 
-    if (startIndex === -1) return [];
+    return years.map((year, idx) => {
+      if (idx > 0) {
+        expected *= (1 + (CPIData[year]?.value || 0) / 100);
+        actual = salaryData.agencies[selectedAgency].years[year][selectedLevel][selectedStep];
+      }
 
-    return agencyData
-      .slice(startIndex)
-      .filter(d => d.year <= endYear)
-      .map((d, idx) => {
-        if (idx > 0) {
-          expected *= (1 + (CPIData[d.year]?.value || 0) / 100);
-          actual *= (1 + d.wage / 100);
-        }
-
-        return {
-          year: d.year,
-          expected: Number(expected.toFixed(2)),
-          actual: Number(actual.toFixed(2)),
-          difference: Number((actual - expected).toFixed(2)),
-          isFuture: d.year > currentYear
-        };
-      });
-  }, [selectedAgency, projectionStartYear, endYear, startingSalary]);
-
-  // Handle level change
-  const handleLevelChange = (e) => {
-    setSelectedLevel(e.target.value);
-    setSelectedStep('Step 1'); // Reset to first step
-  };
-
-  // Handle step change
-  const handleStepChange = (e) => {
-    setSelectedStep(e.target.value);
-  };
+      return {
+        year,
+        expected: Number(expected.toFixed(2)),
+        actual: Number(actual.toFixed(2)),
+        difference: Number((actual - expected).toFixed(2)),
+        isFuture: year > currentYear
+      };
+    });
+  }, [selectedAgency, projectionStartYear, endYear, selectedLevel, selectedStep]);
 
   return (
     <div className="app-container">
       <h2 className="app-title">
-        {AGENCIES[selectedAgency].name} Wage Growth vs CPI
+        {salaryData.agencies[selectedAgency].name} Wage Growth vs CPI
       </h2>
 
       {/* Controls Row */}
@@ -92,7 +170,7 @@ function App() {
           <span className="control-label">Agency:</span>
           <select
             value={selectedAgency}
-            onChange={e => setSelectedAgency(e.target.value)}
+            onChange={handleAgencyChange}
             className="control-select"
           >
             {Object.keys(AGENCIES).map(agency => (
@@ -166,7 +244,7 @@ function App() {
             <span className="control-label">Year:</span>
             <select 
               value={projectionStartYear}
-              onChange={(e) => setProjectionStartYear(Number(e.target.value))}
+              onChange={handleProjectionStartYearChange}
               className="control-select"
             >
               {yearOptions.map(year => (
@@ -184,7 +262,7 @@ function App() {
               className="control-select"
             >
               <option value="">Select</option>
-              {SALARY_DATA[selectedAgency] && Object.keys(SALARY_DATA[selectedAgency]).map(level => (
+              {salaryData.agencies[selectedAgency] && Object.keys(salaryData.agencies[selectedAgency].years[projectionStartYear]).map(level => (
                 <option key={level} value={level}>{level}</option>
               ))}
             </select>
@@ -199,8 +277,8 @@ function App() {
                 onChange={handleStepChange}
                 className="control-select"
               >
-                {SALARY_DATA[selectedAgency][selectedLevel] && 
-                 Object.keys(SALARY_DATA[selectedAgency][selectedLevel]).map(step => (
+                {salaryData.agencies[selectedAgency].years[projectionStartYear][selectedLevel] && 
+                 Object.keys(salaryData.agencies[selectedAgency].years[projectionStartYear][selectedLevel]).map(step => (
                   <option key={step} value={step}>{step}</option>
                 ))}
               </select>
