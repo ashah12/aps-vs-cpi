@@ -89,11 +89,29 @@ function App() {
   const handleAgencyChange = (e) => {
     const newAgency = e.target.value;
     setSelectedAgency(newAgency);
+    
+    // Check if the agency exists in the salary data
+    if (!salaryData.agencies[newAgency]) {
+      console.error(`No salary data found for agency: ${newAgency}`);
+      return;
+    }
+
     // Reset to default level and step
     setSelectedLevel('APS6');
     setSelectedStep('Step 1');
+    
     // Update starting salary based on new agency's default level and step
-    setStartingSalary(salaryData.agencies[newAgency].years[projectionStartYear]['APS6']['Step 1']);
+    const agencyData = salaryData.agencies[newAgency];
+    const years = Object.keys(agencyData.years).map(Number).sort((a, b) => a - b);
+    const latestYear = years[years.length - 1];
+    
+    if (agencyData.years[latestYear] && 
+        agencyData.years[latestYear]['APS6'] && 
+        agencyData.years[latestYear]['APS6']['Step 1']) {
+      setStartingSalary(agencyData.years[latestYear]['APS6']['Step 1']);
+    } else {
+      console.error(`No salary data found for ${newAgency} APS6 Step 1 in year ${latestYear}`);
+    }
   };
 
   // Handle projection start year change
