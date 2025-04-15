@@ -42,9 +42,9 @@ const CPIData = {
 
 function App() {
   const [chartType, setChartType] = useState('line');
-  const [startYear, setStartYear] = useState(2015);
+  const [startYear, setStartYear] = useState(2000);
   const [endYear, setEndYear] = useState(2024);
-  const [projectionStartYear, setProjectionStartYear] = useState(2015);
+  const [projectionStartYear, setProjectionStartYear] = useState(2000);
   const [selectedAgency, setSelectedAgency] = useState('ABS');
   const [yearOptions, setYearOptions] = useState([]);
   const [selectedLevel, setSelectedLevel] = useState('APS6');
