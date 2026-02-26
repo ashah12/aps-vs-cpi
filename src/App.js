@@ -3,42 +3,13 @@ import './App.css';
 import LineChart from './components/LineChart';
 import BarChart from './components/BarChart';
 import SalaryProjectionChart from './components/SalaryProjectionChart';
-import salaryData from './data/salary-data.json';
-
-// ABS CPI data for June quarter (annual)
-const CPIData = {
-  2000: { value: 3.0, isProjected: false },
-  2001: { value: 6.0, isProjected: false },
-  2002: { value: 2.8, isProjected: false },
-  2003: { value: 2.8, isProjected: false },
-  2004: { value: 2.5, isProjected: false },
-  2005: { value: 2.5, isProjected: false },
-  2006: { value: 4.0, isProjected: false },
-  2007: { value: 2.1, isProjected: false },
-  2008: { value: 4.5, isProjected: false },
-  2009: { value: 1.5, isProjected: false },
-  2010: { value: 3.1, isProjected: false },
-  2011: { value: 3.6, isProjected: false },
-  2012: { value: 1.2, isProjected: false },
-  2013: { value: 2.4, isProjected: false },
-  2014: { value: 3.0, isProjected: false },
-  2015: { value: 1.5, isProjected: false },
-  2016: { value: 1.0, isProjected: false },
-  2017: { value: 1.9, isProjected: false },
-  2018: { value: 2.1, isProjected: false },
-  2019: { value: 1.6, isProjected: false },
-  2020: { value: -0.3, isProjected: false },
-  2021: { value: 3.8, isProjected: false },
-  2022: { value: 6.1, isProjected: false },
-  2023: { value: 6.0, isProjected: false },
-  2024: { value: 3.8, isProjected: false },
-  2025: { value: 2.8, isProjected: true },
-  2026: { value: 2.5, isProjected: true },
-  2027: { value: 2.5, isProjected: true },
-  2028: { value: 2.5, isProjected: true },
-  2029: { value: 2.5, isProjected: true },
-  2030: { value: 2.5, isProjected: true }
-};
+import AgencySelector from './components/AgencySelector';
+import AgencyMultiSelector from './components/AgencyMultiSelector';
+import ComparisonChart from './components/ComparisonChart';
+import SummaryStats from './components/SummaryStats';
+import DataProvenance from './components/DataProvenance';
+import salaryData from './data/agencies/index';
+import CPIData from './data/cpi-data';
 
 function App() {
   const [chartType, setChartType] = useState('line');
@@ -49,26 +20,14 @@ function App() {
   const [yearOptions, setYearOptions] = useState([]);
   const [selectedLevel, setSelectedLevel] = useState('APS6');
   const [selectedStep, setSelectedStep] = useState('Step 1');
+  const [comparisonMode, setComparisonMode] = useState(false);
+  const [comparedAgencies, setComparedAgencies] = useState([]);
   const [startingSalary, setStartingSalary] = useState(() => {
-    // Check if the agency exists and has data
-    if (!salaryData.agencies[selectedAgency]) {
-      console.error(`No salary data found for agency: ${selectedAgency}`);
-      return 0;
-    }
-
+    if (!salaryData.agencies[selectedAgency]) return 0;
     const agencyData = salaryData.agencies[selectedAgency];
     const years = Object.keys(agencyData.years).map(Number).sort((a, b) => a - b);
     const latestYear = years[years.length - 1];
-
-    // Check if we have data for the selected level and step
-    if (agencyData.years[latestYear] && 
-        agencyData.years[latestYear][selectedLevel] && 
-        agencyData.years[latestYear][selectedLevel][selectedStep]) {
-      return agencyData.years[latestYear][selectedLevel][selectedStep];
-    }
-
-    console.error(`No salary data found for ${selectedAgency} ${selectedLevel} ${selectedStep} in year ${latestYear}`);
-    return 0;
+    return agencyData.years[latestYear]?.[selectedLevel]?.[selectedStep] || 0;
   });
 
   const toggleChart = () => {
@@ -77,17 +36,11 @@ function App() {
 
   // Load years on mount and when agency changes
   useEffect(() => {
-    if (!salaryData.agencies[selectedAgency]) {
-      console.error(`No salary data found for agency: ${selectedAgency}`);
-      return;
-    }
-
+    if (!salaryData.agencies[selectedAgency]) return;
     const years = Object.keys(salaryData.agencies[selectedAgency].years)
       .map(Number)
       .sort((a, b) => a - b);
     setYearOptions(years);
-    
-    // Set default start year to 2000 if it's available
     if (years.includes(2000)) {
       setStartYear(2000);
     }
@@ -97,70 +50,67 @@ function App() {
   const handleLevelChange = (e) => {
     const newLevel = e.target.value;
     setSelectedLevel(newLevel);
-    setSelectedStep('Step 1'); // Reset to first step
-    // Update starting salary based on new level and first step
-    setStartingSalary(salaryData.agencies[selectedAgency].years[projectionStartYear][newLevel]['Step 1']);
+    setSelectedStep('Step 1');
+    const salary = salaryData.agencies[selectedAgency]?.years?.[projectionStartYear]?.[newLevel]?.['Step 1'];
+    if (salary) setStartingSalary(salary);
   };
 
   // Handle step change
   const handleStepChange = (e) => {
     const newStep = e.target.value;
     setSelectedStep(newStep);
-    // Update starting salary based on new step
-    setStartingSalary(salaryData.agencies[selectedAgency].years[projectionStartYear][selectedLevel][newStep]);
+    const salary = salaryData.agencies[selectedAgency]?.years?.[projectionStartYear]?.[selectedLevel]?.[newStep];
+    if (salary) setStartingSalary(salary);
   };
 
-  // Handle agency change
-  const handleAgencyChange = (e) => {
-    const newAgency = e.target.value;
-    setSelectedAgency(newAgency);
-    
-    // Check if the agency exists in the salary data
-    if (!salaryData.agencies[newAgency]) {
-      console.error(`No salary data found for agency: ${newAgency}`);
-      return;
-    }
+  // Handle agency change - accepts key string directly from AgencySelector
+  const handleAgencyChange = (newAgency) => {
+    // Support both string key (from AgencySelector) and event (from select)
+    const agencyKey = typeof newAgency === 'string' ? newAgency : newAgency.target.value;
+    setSelectedAgency(agencyKey);
 
-    // Reset to default level and step
-    setSelectedLevel('APS6');
-    setSelectedStep('Step 1');
-    
-    // Update starting salary based on new agency's default level and step
-    const agencyData = salaryData.agencies[newAgency];
+    if (!salaryData.agencies[agencyKey]) return;
+
+    const agencyData = salaryData.agencies[agencyKey];
     const years = Object.keys(agencyData.years).map(Number).sort((a, b) => a - b);
     const latestYear = years[years.length - 1];
-    
-    if (agencyData.years[latestYear] && 
-        agencyData.years[latestYear]['APS6'] && 
-        agencyData.years[latestYear]['APS6']['Step 1']) {
-      setStartingSalary(agencyData.years[latestYear]['APS6']['Step 1']);
-    } else {
-      console.error(`No salary data found for ${newAgency} APS6 Step 1 in year ${latestYear}`);
-    }
+
+    // Find a valid level - prefer APS6, fall back to first available
+    const availableLevels = Object.keys(agencyData.years[latestYear] || {});
+    const newLevel = availableLevels.includes('APS6') ? 'APS6' : availableLevels[0] || 'APS6';
+    setSelectedLevel(newLevel);
+    setSelectedStep('Step 1');
+
+    const salary = agencyData.years[latestYear]?.[newLevel]?.['Step 1'];
+    if (salary) setStartingSalary(salary);
   };
 
   // Handle projection start year change
   const handleProjectionStartYearChange = (e) => {
     const newYear = Number(e.target.value);
     setProjectionStartYear(newYear);
-    // Update starting salary based on new year
-    setStartingSalary(salaryData.agencies[selectedAgency].years[newYear][selectedLevel][selectedStep]);
+    const salary = salaryData.agencies[selectedAgency]?.years?.[newYear]?.[selectedLevel]?.[selectedStep];
+    if (salary) setStartingSalary(salary);
   };
 
+  // Single agency chart data
   const filteredData = useMemo(() => {
+    if (!salaryData.agencies[selectedAgency]) return [];
     const years = Object.keys(salaryData.agencies[selectedAgency].years)
       .map(Number)
       .filter(year => year >= startYear && year <= endYear)
       .sort((a, b) => a - b);
 
     return years.map((year, index) => {
-      const currentSalary = salaryData.agencies[selectedAgency].years[year][selectedLevel][selectedStep];
+      const currentSalary = salaryData.agencies[selectedAgency].years[year]?.[selectedLevel]?.[selectedStep] || 0;
       let wageGrowth = 0;
-      
+
       if (index > 0) {
         const prevYear = years[index - 1];
-        const prevSalary = salaryData.agencies[selectedAgency].years[prevYear][selectedLevel][selectedStep];
-        wageGrowth = ((currentSalary - prevSalary) / prevSalary) * 100;
+        const prevSalary = salaryData.agencies[selectedAgency].years[prevYear]?.[selectedLevel]?.[selectedStep] || 0;
+        if (prevSalary > 0) {
+          wageGrowth = ((currentSalary - prevSalary) / prevSalary) * 100;
+        }
       }
 
       return {
@@ -168,16 +118,60 @@ function App() {
         wage: wageGrowth,
         cpi: CPIData[year]?.value || 0,
         isProjected: CPIData[year]?.isProjected || false,
-        gap: wageGrowth - (CPIData[year]?.value || 0) // Real wage change
+        gap: wageGrowth - (CPIData[year]?.value || 0)
       };
     });
   }, [startYear, endYear, selectedAgency, selectedLevel, selectedStep]);
 
+  // Comparison chart data
+  const comparisonData = useMemo(() => {
+    if (!comparisonMode || comparedAgencies.length === 0) return [];
+
+    // Find common year range
+    const allYears = new Set();
+    comparedAgencies.forEach(key => {
+      if (salaryData.agencies[key]) {
+        Object.keys(salaryData.agencies[key].years).map(Number).forEach(y => allYears.add(y));
+      }
+    });
+
+    const years = [...allYears]
+      .filter(y => y >= startYear && y <= endYear)
+      .sort((a, b) => a - b);
+
+    return years.map((year, idx) => {
+      const point = { year, cpi: CPIData[year]?.value || 0 };
+      for (const agencyKey of comparedAgencies) {
+        const agency = salaryData.agencies[agencyKey];
+        if (!agency) continue;
+        if (idx > 0) {
+          const prevYear = years[idx - 1];
+          const curr = agency.years[year]?.[selectedLevel]?.[selectedStep] || 0;
+          const prev = agency.years[prevYear]?.[selectedLevel]?.[selectedStep] || 0;
+          point[agencyKey] = prev > 0 ? ((curr - prev) / prev) * 100 : 0;
+        } else {
+          point[agencyKey] = 0;
+        }
+      }
+      return point;
+    });
+  }, [comparisonMode, comparedAgencies, startYear, endYear, selectedLevel, selectedStep]);
+
+  // Agency short names for comparison chart legend
+  const agencyNames = useMemo(() => {
+    const names = {};
+    Object.entries(salaryData.agencies).forEach(([key, agency]) => {
+      names[key] = agency.shortName || agency.name;
+    });
+    return names;
+  }, []);
+
+  // Salary projection data
   const salaryProjectionData = useMemo(() => {
     if (!startingSalary || !projectionStartYear) return [];
+    if (!salaryData.agencies[selectedAgency]) return [];
 
     let expected = startingSalary;
-    let actual = startingSalary;
     const years = Object.keys(salaryData.agencies[selectedAgency].years)
       .map(Number)
       .filter(year => year >= projectionStartYear && year <= endYear)
@@ -187,8 +181,8 @@ function App() {
     return years.map((year, idx) => {
       if (idx > 0) {
         expected *= (1 + (CPIData[year]?.value || 0) / 100);
-        actual = salaryData.agencies[selectedAgency].years[year][selectedLevel][selectedStep];
       }
+      const actual = salaryData.agencies[selectedAgency].years[year]?.[selectedLevel]?.[selectedStep] || 0;
 
       return {
         year,
@@ -200,27 +194,63 @@ function App() {
     });
   }, [selectedAgency, projectionStartYear, endYear, selectedLevel, selectedStep, startingSalary]);
 
+  // Available levels for current agency
+  const availableLevels = useMemo(() => {
+    const agency = salaryData.agencies[selectedAgency];
+    if (!agency) return [];
+    const yearData = agency.years[projectionStartYear] || agency.years[Object.keys(agency.years)[0]];
+    return yearData ? Object.keys(yearData) : [];
+  }, [selectedAgency, projectionStartYear]);
+
+  // Available steps for current level
+  const availableSteps = useMemo(() => {
+    const agency = salaryData.agencies[selectedAgency];
+    if (!agency) return [];
+    const yearData = agency.years[projectionStartYear] || agency.years[Object.keys(agency.years)[0]];
+    return yearData?.[selectedLevel] ? Object.keys(yearData[selectedLevel]) : [];
+  }, [selectedAgency, projectionStartYear, selectedLevel]);
+
+  const currentAgency = salaryData.agencies[selectedAgency];
+
   return (
     <div className="app-container">
       <h2 className="app-title">
-        {salaryData.agencies[selectedAgency].name} Wage Growth vs CPI
+        {comparisonMode ? 'Agency Comparison' : `${currentAgency?.name || selectedAgency} Wage Growth vs CPI`}
       </h2>
+
+      {/* Data Provenance */}
+      {!comparisonMode && currentAgency && (
+        <DataProvenance agency={currentAgency} />
+      )}
 
       {/* Controls Row */}
       <div className="controls-row">
+        {/* Mode Toggle */}
+        <button
+          onClick={() => setComparisonMode(!comparisonMode)}
+          className="toggle-button mode-toggle"
+          type="button"
+        >
+          {comparisonMode ? 'Single Agency' : 'Compare Agencies'}
+        </button>
+
         {/* Agency Selector */}
-        <div className="control-group">
-          <span className="control-label">Agency:</span>
-          <select
-            value={selectedAgency}
-            onChange={handleAgencyChange}
-            className="control-select"
-          >
-            {Object.keys(salaryData.agencies).map(agency => (
-              <option key={agency} value={agency}>{salaryData.agencies[agency].name}</option>
-            ))}
-          </select>
-        </div>
+        {comparisonMode ? (
+          <AgencyMultiSelector
+            agencies={salaryData.agencies}
+            selectedAgencies={comparedAgencies}
+            onAgenciesChange={setComparedAgencies}
+          />
+        ) : (
+          <div className="control-group">
+            <span className="control-label">Agency:</span>
+            <AgencySelector
+              agencies={salaryData.agencies}
+              selectedAgency={selectedAgency}
+              onAgencyChange={handleAgencyChange}
+            />
+          </div>
+        )}
 
         {/* Year Filters */}
         <div className="control-group">
@@ -232,9 +262,7 @@ function App() {
               onChange={(e) => setStartYear(Number(e.target.value))}
             >
               {yearOptions.map((year) => (
-                <option key={year} value={year}>
-                  {year}
-                </option>
+                <option key={year} value={year}>{year}</option>
               ))}
             </select>
             <span className="control-label"> to </span>
@@ -244,149 +272,151 @@ function App() {
               onChange={(e) => setEndYear(Number(e.target.value))}
             >
               {yearOptions.map((year) => (
-                <option key={year} value={year}>
-                  {year}
-                </option>
+                <option key={year} value={year}>{year}</option>
               ))}
             </select>
           </div>
+        </div>
+
+        {/* Level/Step selectors (shared between modes) */}
+        <div className="control-group">
+          <span className="control-label">Level:</span>
+          <select
+            value={selectedLevel}
+            onChange={handleLevelChange}
+            className="control-select"
+          >
+            {availableLevels.map(level => (
+              <option key={level} value={level}>{level}</option>
+            ))}
+          </select>
+        </div>
+
+        <div className="control-group">
+          <span className="control-label">Step:</span>
+          <select
+            value={selectedStep}
+            onChange={handleStepChange}
+            className="control-select"
+          >
+            {availableSteps.map(step => (
+              <option key={step} value={step}>{step}</option>
+            ))}
+          </select>
         </div>
 
         {/* Toggle Chart Button */}
         <button
           onClick={toggleChart}
           className="toggle-button"
+          type="button"
         >
-          Toggle to {chartType === 'line' ? 'Bar' : 'Line'} Chart
+          {chartType === 'line' ? 'Bar' : 'Line'} Chart
         </button>
       </div>
 
       {/* Main Chart */}
       <div className="chart-container">
-        {chartType === 'line' ? (
-          <LineChart data={filteredData} />
+        {comparisonMode ? (
+          <ComparisonChart
+            data={comparisonData}
+            agencies={comparedAgencies}
+            agencyNames={agencyNames}
+          />
         ) : (
-          <BarChart data={filteredData} />
+          chartType === 'line' ? (
+            <LineChart data={filteredData} />
+          ) : (
+            <BarChart data={filteredData} />
+          )
         )}
       </div>
 
+      {/* Summary Stats (single agency mode only) */}
+      {!comparisonMode && (
+        <SummaryStats
+          data={filteredData}
+          agencyName={currentAgency?.name || selectedAgency}
+          selectedLevel={selectedLevel}
+          selectedStep={selectedStep}
+          startYear={startYear}
+          endYear={endYear}
+          salaryData={currentAgency}
+        />
+      )}
+
       {/* Projection Note */}
       <div className="projection-note">
-        Note: CPI values for 2024 and beyond are projected estimates
+        Note: CPI values for 2025 and beyond are projected estimates
       </div>
 
-      {/* Salary Projection */}
-      <div className="salary-projection">
-        <h2 className="projection-title">
-          Salary Projection
-        </h2>
+      {/* Salary Projection (single agency mode only) */}
+      {!comparisonMode && (
+        <div className="salary-projection">
+          <h2 className="projection-title">
+            Salary Projection
+          </h2>
 
-        {/* Projection Controls */}
-        <div className="controls-row">
-          <div className="control-group">
-            <span className="control-label">Year:</span>
-            <select 
-              value={projectionStartYear}
-              onChange={handleProjectionStartYearChange}
-              className="control-select"
-            >
-              {yearOptions.map(year => (
-                <option key={year} value={year}>{year}</option>
-              ))}
-            </select>
-          </div>
-
-          {/* APS Level Selector */}
-          <div className="control-group">
-            <span className="control-label">Level:</span>
-            <select
-              value={selectedLevel}
-              onChange={handleLevelChange}
-              className="control-select"
-            >
-              <option value="">Select</option>
-              {salaryData.agencies[selectedAgency] && Object.keys(salaryData.agencies[selectedAgency].years[projectionStartYear]).map(level => (
-                <option key={level} value={level}>{level}</option>
-              ))}
-            </select>
-          </div>
-
-          {/* APS Step Selector - only shown if level is selected */}
-          {selectedLevel && (
+          {/* Projection Controls */}
+          <div className="controls-row">
             <div className="control-group">
-              <span className="control-label">Step:</span>
+              <span className="control-label">Start Year:</span>
               <select
-                value={selectedStep}
-                onChange={handleStepChange}
+                value={projectionStartYear}
+                onChange={handleProjectionStartYearChange}
                 className="control-select"
               >
-                {salaryData.agencies[selectedAgency].years[projectionStartYear][selectedLevel] && 
-                 Object.keys(salaryData.agencies[selectedAgency].years[projectionStartYear][selectedLevel]).map(step => (
-                  <option key={step} value={step}>{step}</option>
+                {yearOptions.map(year => (
+                  <option key={year} value={year}>{year}</option>
                 ))}
               </select>
             </div>
-          )}
 
-          <div className="control-group">
-            <span className="control-label">Salary:</span>
-            <input 
-              type="number"
-              value={startingSalary}
-              onChange={(e) => setStartingSalary(Number(e.target.value))}
-              className="control-select"
-            />
+            <div className="control-group">
+              <span className="control-label">Salary:</span>
+              <input
+                type="number"
+                value={startingSalary}
+                onChange={(e) => setStartingSalary(Number(e.target.value))}
+                className="control-select"
+              />
+            </div>
+          </div>
+
+          <div className="chart-container">
+            <SalaryProjectionChart data={salaryProjectionData} />
           </div>
         </div>
-
-        <div className="chart-container">
-          <SalaryProjectionChart data={salaryProjectionData} />
-        </div>
-      </div>
+      )}
 
       {/* References */}
       <div className="references">
-        <h3 className="references-title">
-          References
-        </h3>
-        
+        <h3 className="references-title">References</h3>
+
         <div className="references-list">
           <div>
             <strong>Enterprise Agreements:</strong>
             <ul style={{ listStyle: 'none', padding: '0', margin: '10px 0' }}>
-              <li className="references-item">
-                • APSC Enterprise Agreement 2024-2027:&nbsp;
-                <a 
-                  href="https://www.apsc.gov.au/sites/default/files/2024-03/APSC%20Enterprise%20Agreement%202024-2027.pdf" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="references-link"
-                >
-                  APSC EA PDF
-                </a>
-              </li>
-              <li className="references-item">
-                • Defence Enterprise Agreement 2024-25:&nbsp;
-                <a 
-                  href="https://www.defence.gov.au/about/reports-publications/enterprise-agreements" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="references-link"
-                >
-                  Defence Website
-                </a>
-              </li>
-              <li className="references-item">
-                • ATO Enterprise Agreement 2024-25:&nbsp;
-                <a 
-                  href="https://www.ato.gov.au/about-ato/careers/working-at-the-ato/enterprise-agreement/" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="references-link"
-                >
-                  ATO Website
-                </a>
-              </li>
+              {Object.entries(salaryData.agencies)
+                .filter(([, agency]) => agency.eaLink)
+                .map(([key, agency]) => (
+                  <li key={key} className="references-item">
+                    {'\u2022'} {agency.eaName || `${agency.name} EA`}:&nbsp;
+                    <a
+                      href={agency.eaLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="references-link"
+                    >
+                      View
+                    </a>
+                    {agency.dataSource === 'estimated' && (
+                      <span className="provenance-badge estimated" style={{ marginLeft: 8, fontSize: '0.75rem' }}>
+                        Estimated
+                      </span>
+                    )}
+                  </li>
+                ))}
             </ul>
           </div>
 
@@ -394,10 +424,10 @@ function App() {
             <strong>CPI Data Source:</strong>
             <ul style={{ listStyle: 'none', padding: '0', margin: '10px 0' }}>
               <li className="references-item">
-                • Australian Bureau of Statistics - Consumer Price Index:&nbsp;
-                <a 
-                  href="https://www.abs.gov.au/statistics/economy/price-indexes-and-inflation/consumer-price-index-australia" 
-                  target="_blank" 
+                {'\u2022'} Australian Bureau of Statistics - Consumer Price Index:&nbsp;
+                <a
+                  href="https://www.abs.gov.au/statistics/economy/price-indexes-and-inflation/consumer-price-index-australia"
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="references-link"
                 >
@@ -411,19 +441,16 @@ function App() {
             <strong>Notes:</strong>
             <ul style={{ listStyle: 'none', padding: '0', margin: '10px 0' }}>
               <li className="references-item">
-                • Wage data from 2015-2023 is based on historical Enterprise Agreements
+                {'\u2022'} Original 4 agencies (APSC, Defence, ATO, ABS) use mixed actual/estimated data
               </li>
               <li className="references-item">
-                • Wage data for 2024-2025 is based on current Enterprise Agreements
+                {'\u2022'} Additional agencies use estimated salary data based on APS pay scale patterns
               </li>
               <li className="references-item">
-                • Wage data from 2026-2030 is projected based on current trends
+                {'\u2022'} CPI data from 2000-2024 is actual data from ABS
               </li>
               <li className="references-item">
-                • CPI data from 2015-2023 is actual data from ABS
-              </li>
-              <li className="references-item">
-                • CPI data from 2024-2030 is projected based on economic forecasts
+                {'\u2022'} CPI data from 2025-2030 is projected based on economic forecasts
               </li>
             </ul>
           </div>
