@@ -183,3 +183,331 @@
 .references-link:hover {
   text-decoration: underline;
 }
+
+/* ========================================
+   Agency Selector (searchable dropdown)
+   ======================================== */
+
+.agency-selector {
+  position: relative;
+  min-width: 180px;
+  max-width: 300px;
+  flex: 1 1 auto;
+}
+
+.agency-selector-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 8px 12px;
+  font-size: clamp(0.9rem, 3vw, 1.1rem);
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  cursor: pointer;
+  text-align: left;
+}
+
+.agency-selector-trigger:hover {
+  border-color: #999;
+}
+
+.agency-selector-value {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+
+.agency-selector-arrow {
+  margin-left: 8px;
+  font-size: 0.7em;
+  color: #666;
+}
+
+.agency-selector-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  min-width: 280px;
+  max-height: 400px;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+}
+
+.agency-selector-search {
+  padding: 8px 12px;
+  border: none;
+  border-bottom: 1px solid #eee;
+  font-size: clamp(0.85rem, 2.5vw, 1rem);
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.agency-selector-search:focus {
+  border-bottom-color: #1d4ed8;
+}
+
+.agency-selector-list {
+  overflow-y: auto;
+  max-height: 350px;
+}
+
+.agency-selector-group {
+  padding: 4px 0;
+}
+
+.agency-group-header {
+  padding: 6px 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: #f8f9fa;
+  border-bottom: 1px solid #eee;
+}
+
+.agency-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 12px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: clamp(0.85rem, 2.5vw, 0.95rem);
+  text-align: left;
+}
+
+.agency-option:hover {
+  background-color: #f0f4ff;
+}
+
+.agency-option.selected {
+  background-color: #e8f0fe;
+  font-weight: 600;
+}
+
+.agency-option.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.agency-option-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.agency-option-check {
+  font-size: 1.1em;
+  min-width: 20px;
+}
+
+.agency-option-badge {
+  font-size: 0.7rem;
+  padding: 1px 6px;
+  border-radius: 8px;
+  font-weight: 500;
+}
+
+.agency-option-badge.estimated {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.agency-selector-empty {
+  padding: 16px;
+  text-align: center;
+  color: #999;
+  font-size: 0.9rem;
+}
+
+/* ========================================
+   Agency Multi Selector (comparison mode)
+   ======================================== */
+
+.agency-multi-selector {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 250px;
+  max-width: 500px;
+}
+
+.agency-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  padding: 4px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background: #fff;
+  min-height: 38px;
+}
+
+.agency-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  background: #e8f0fe;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  color: #1d4ed8;
+  font-weight: 500;
+}
+
+.agency-chip-remove {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #666;
+  font-size: 1rem;
+  line-height: 1;
+  padding: 0 2px;
+}
+
+.agency-chip-remove:hover {
+  color: #c00;
+}
+
+.agency-multi-trigger {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #1d4ed8;
+  font-size: 0.85rem;
+  padding: 4px 8px;
+}
+
+.agency-multi-trigger:hover {
+  text-decoration: underline;
+}
+
+/* ========================================
+   Mode Toggle
+   ======================================== */
+
+.mode-toggle {
+  background-color: #6366f1;
+}
+
+.mode-toggle:hover {
+  background-color: #4f46e5;
+}
+
+/* ========================================
+   Summary Statistics
+   ======================================== */
+
+.summary-stats {
+  margin: 15px 5px;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.summary-stats-title {
+  font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+  margin-bottom: 12px;
+  text-align: center;
+  color: #333;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 10px;
+}
+
+.stat-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px;
+  background: #fff;
+  border-radius: 6px;
+  border: 1px solid #e9ecef;
+}
+
+.stat-label {
+  font-size: clamp(0.7rem, 2vw, 0.8rem);
+  color: #666;
+  text-align: center;
+  margin-bottom: 4px;
+}
+
+.stat-value {
+  font-size: clamp(1rem, 3vw, 1.3rem);
+  font-weight: 700;
+  color: #333;
+}
+
+.stat-value.positive {
+  color: #059669;
+}
+
+.stat-value.negative {
+  color: #dc2626;
+}
+
+/* ========================================
+   Data Provenance Indicator
+   ======================================== */
+
+.provenance-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  font-size: clamp(0.8rem, 2vw, 0.9rem);
+}
+
+.provenance-badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.provenance-badge.verified {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.provenance-badge.mixed {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.provenance-badge.estimated {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.provenance-link {
+  color: #1d4ed8;
+  text-decoration: none;
+  font-size: 0.85rem;
+}
+
+.provenance-link:hover {
+  text-decoration: underline;
+}
