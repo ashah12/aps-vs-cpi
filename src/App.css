@@ -123,6 +123,10 @@
   max-width: 300px;
 }
 
+.toggle-button.active {
+  background-color: #92400e;
+}
+
 .chart-container {
   width: 100%;
   height: clamp(300px, 50vh, 500px);
