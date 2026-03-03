@@ -10,60 +10,70 @@ import {
   ResponsiveContainer
 } from 'recharts';
 
-const SalaryProjectionChart = ({ data }) => {
+const SalaryProjectionChart = ({ data, showCumulative }) => {
   return (
     <ResponsiveContainer width="100%" height="100%">
       <RechartsLineChart data={data} margin={{ top: 20, right: 10, left: 10, bottom: 20 }}>
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis 
-          dataKey="year" 
+        <XAxis
+          dataKey="year"
           domain={['dataMin', 'dataMax + 1']}
           tick={{ fontSize: 'clamp(0.8rem, 2vw, 1rem)' }}
         />
-        <YAxis 
-          label={{ 
-            value: 'Salary ($k)', 
-            angle: -90, 
+        <YAxis
+          label={{
+            value: 'Salary ($k)',
+            angle: -90,
             position: 'insideLeft',
             style: { fontSize: 'clamp(0.8rem, 2vw, 1rem)' }
           }}
           tick={{ fontSize: 'clamp(0.8rem, 2vw, 1rem)' }}
           tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
         />
-        <Tooltip 
+        <Tooltip
           formatter={(val) => `$${(val / 1000).toFixed(1)}k`}
           contentStyle={{
             fontSize: 'clamp(0.8rem, 2vw, 1rem)',
             padding: '10px'
           }}
         />
-        <Legend 
+        <Legend
           wrapperStyle={{
             paddingTop: '20px',
             fontSize: 'clamp(0.8rem, 2vw, 1rem)'
           }}
         />
-        <Line 
-          type="monotone" 
-          dataKey="expected" 
-          name="Expected (CPI Adjusted)" 
-          stroke="#82ca9d" 
+        <Line
+          type="monotone"
+          dataKey="expected"
+          name="Expected (CPI Adjusted)"
+          stroke="#82ca9d"
           strokeWidth={2}
         />
-        <Line 
-          type="monotone" 
-          dataKey="actual" 
-          name="Actual (Wage Growth)" 
-          stroke="#8884d8" 
+        <Line
+          type="monotone"
+          dataKey="actual"
+          name="Actual (Wage Growth)"
+          stroke="#8884d8"
           strokeWidth={2}
         />
-        <Line 
-          type="monotone" 
-          dataKey="difference" 
-          name="Difference" 
-          stroke="#ff4d4d" 
+        <Line
+          type="monotone"
+          dataKey="difference"
+          name="Difference"
+          stroke="#ff4d4d"
           strokeDasharray="4 4"
         />
+        {showCumulative && (
+          <Line
+            type="monotone"
+            dataKey="cumulativeDifference"
+            name="Cumulative Difference"
+            stroke="#ff9900"
+            strokeWidth={2}
+            strokeDasharray="6 2"
+          />
+        )}
       </RechartsLineChart>
     </ResponsiveContainer>
   );

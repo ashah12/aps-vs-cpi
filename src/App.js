@@ -22,6 +22,7 @@ function App() {
   const [selectedStep, setSelectedStep] = useState('Step 1');
   const [comparisonMode, setComparisonMode] = useState(false);
   const [comparedAgencies, setComparedAgencies] = useState([]);
+  const [showCumulative, setShowCumulative] = useState(false);
   const [startingSalary, setStartingSalary] = useState(() => {
     if (!salaryData.agencies[selectedAgency]) return 0;
     const agencyData = salaryData.agencies[selectedAgency];
@@ -172,6 +173,7 @@ function App() {
     if (!salaryData.agencies[selectedAgency]) return [];
 
     let expected = startingSalary;
+    let cumulative = 0;
     const years = Object.keys(salaryData.agencies[selectedAgency].years)
       .map(Number)
       .filter(year => year >= projectionStartYear && year <= endYear)
@@ -183,12 +185,15 @@ function App() {
         expected *= (1 + (CPIData[year]?.value || 0) / 100);
       }
       const actual = salaryData.agencies[selectedAgency].years[year]?.[selectedLevel]?.[selectedStep] || 0;
+      const difference = Number((actual - expected).toFixed(2));
+      cumulative += difference;
 
       return {
         year,
         expected: Number(expected.toFixed(2)),
         actual: Number(actual.toFixed(2)),
-        difference: Number((actual - expected).toFixed(2)),
+        difference,
+        cumulativeDifference: Number(cumulative.toFixed(2)),
         isFuture: year > currentYear
       };
     });
@@ -381,10 +386,18 @@ function App() {
                 className="control-select"
               />
             </div>
+
+            <button
+              onClick={() => setShowCumulative(prev => !prev)}
+              className={`toggle-button${showCumulative ? ' active' : ''}`}
+              type="button"
+            >
+              {showCumulative ? 'Hide' : 'Show'} Cumulative Difference
+            </button>
           </div>
 
           <div className="chart-container">
-            <SalaryProjectionChart data={salaryProjectionData} />
+            <SalaryProjectionChart data={salaryProjectionData} showCumulative={showCumulative} />
           </div>
         </div>
       )}
