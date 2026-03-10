@@ -225,7 +225,7 @@ function App() {
 
       {/* Data Provenance */}
       {!comparisonMode && currentAgency && (
-        <DataProvenance agency={currentAgency} />
+        <DataProvenance agency={currentAgency} selectedYear={endYear} />
       )}
 
       {/* Controls Row */}
@@ -421,8 +421,13 @@ function App() {
                       rel="noopener noreferrer"
                       className="references-link"
                     >
-                      View
+                      Current
                     </a>
+                    {agency.historicalAgreements?.length > 1 && (
+                      <span className="references-history-count">
+                        ({agency.historicalAgreements.length} agreements, {agency.historicalAgreements[agency.historicalAgreements.length - 1]?.startYear}&#8211;{agency.historicalAgreements[0]?.endYear})
+                      </span>
+                    )}
                     {agency.dataSource === 'estimated' && (
                       <span className="provenance-badge estimated" style={{ marginLeft: 8, fontSize: '0.75rem' }}>
                         Estimated
@@ -431,6 +436,18 @@ function App() {
                   </li>
                 ))}
             </ul>
+            <p className="references-fwc-note">
+              Historical enterprise agreements can be searched on the&nbsp;
+              <a
+                href="https://www.fwc.gov.au/agreements-awards/enterprise-agreements/find-enterprise-agreement"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="references-link"
+              >
+                Fair Work Commission
+              </a>
+              &nbsp;website.
+            </p>
           </div>
 
           <div>
