@@ -515,3 +515,79 @@
 .provenance-link:hover {
   text-decoration: underline;
 }
+
+.provenance-indicator-wrapper {
+  margin-bottom: 10px;
+}
+
+.provenance-history-toggle {
+  background: none;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  color: #475569;
+  cursor: pointer;
+  font-size: 0.75rem;
+  padding: 2px 8px;
+}
+
+.provenance-history-toggle:hover {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+}
+
+/* ========================================
+   Agreement History Table
+   ======================================== */
+
+.agreement-history {
+  margin: 8px auto 0;
+  max-width: 700px;
+  overflow-x: auto;
+}
+
+.agreement-history-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: clamp(0.7rem, 2vw, 0.85rem);
+}
+
+.agreement-history-table th {
+  background: #f1f5f9;
+  padding: 6px 10px;
+  text-align: left;
+  font-weight: 600;
+  color: #475569;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.agreement-history-table td {
+  padding: 5px 10px;
+  border-bottom: 1px solid #e2e8f0;
+  color: #334155;
+}
+
+.agreement-history-table tr.agreement-active {
+  background: #eff6ff;
+}
+
+.agreement-history-table tr.agreement-active td {
+  font-weight: 600;
+  color: #1e40af;
+}
+
+/* ========================================
+   References History
+   ======================================== */
+
+.references-history-count {
+  color: #64748b;
+  font-size: 0.8rem;
+  margin-left: 6px;
+}
+
+.references-fwc-note {
+  margin-top: 8px;
+  font-size: 0.85rem;
+  color: #64748b;
+  font-style: italic;
+}

@@ -1057,5 +1057,67 @@
         "Step 3": 145942
       }
     }
-  }
+  },
+  "historicalAgreements": [
+    {
+      "name": "DFAT Enterprise Agreement 2024-2027",
+      "startYear": 2024,
+      "endYear": 2027,
+      "link": "https://www.dfat.gov.au/about-us/careers/enterprise-agreement"
+    },
+    {
+      "name": "DFAT Enterprise Agreement 2020-2024",
+      "startYear": 2020,
+      "endYear": 2024,
+      "link": "https://www.dfat.gov.au/about-us/careers/enterprise-agreement"
+    },
+    {
+      "name": "DFAT Enterprise Agreement 2017-2020",
+      "startYear": 2017,
+      "endYear": 2020,
+      "link": "https://www.dfat.gov.au/about-us/careers/enterprise-agreement"
+    },
+    {
+      "name": "DFAT Enterprise Agreement 2014-2017",
+      "startYear": 2014,
+      "endYear": 2017,
+      "link": "https://www.fwc.gov.au/agreements-awards/enterprise-agreements/find-enterprise-agreement"
+    },
+    {
+      "name": "DFAT Enterprise Agreement 2011-2014",
+      "startYear": 2011,
+      "endYear": 2014,
+      "link": "https://www.fwc.gov.au/agreements-awards/enterprise-agreements/find-enterprise-agreement"
+    },
+    {
+      "name": "DFAT Collective Agreement 2009-2011",
+      "startYear": 2009,
+      "endYear": 2011,
+      "link": "https://www.fwc.gov.au/agreements-awards/enterprise-agreements/find-enterprise-agreement"
+    },
+    {
+      "name": "DFAT Collective Agreement 2006-2009",
+      "startYear": 2006,
+      "endYear": 2009,
+      "link": "https://www.fwc.gov.au/agreements-awards/enterprise-agreements/find-enterprise-agreement"
+    },
+    {
+      "name": "DFAT Certified Agreement 2004-2006",
+      "startYear": 2004,
+      "endYear": 2006,
+      "link": "https://www.fwc.gov.au/agreements-awards/enterprise-agreements/find-enterprise-agreement"
+    },
+    {
+      "name": "DFAT Certified Agreement 2002-2004",
+      "startYear": 2002,
+      "endYear": 2004,
+      "link": "https://www.fwc.gov.au/agreements-awards/enterprise-agreements/find-enterprise-agreement"
+    },
+    {
+      "name": "DFAT Certified Agreement 2000-2002",
+      "startYear": 2000,
+      "endYear": 2002,
+      "link": "https://www.fwc.gov.au/agreements-awards/enterprise-agreements/find-enterprise-agreement"
+    }
+  ]
 }
